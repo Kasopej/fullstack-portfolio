@@ -4,15 +4,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import AppLogo from '@/assets/logo/app_logo.svg?url'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Slot } from 'radix-ui'
-import { BadgeCheckIcon, ShieldCheckIcon } from 'lucide-react'
+import { ShieldCheckIcon } from 'lucide-react'
 
 export default function AuthLayout({
   children,
+  isMobilePreset,
 }: Readonly<{
   children: React.ReactNode
+  isMobilePreset?: boolean
 }>) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile(isMobilePreset)
   if (!isMobile) return (
     <main className="h-dvh grid grid-cols-[1fr_1fr]">
       <section className="auth-sidebar-banner">
