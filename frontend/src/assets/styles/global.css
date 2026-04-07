@@ -71,7 +71,7 @@
     --destructive: #EF4444;
     --destructive-foreground: #FFFFFF;
     --border: #00000014;
-    --input: #FFFFFF;
+    --input: rgba(0, 0, 0, 0.08);
     --sidebar: #E6F3F7;
     --sidebar-foreground: #0F4E4A;
   --navbar: var(--contrast);
@@ -157,4 +157,7 @@
     h2 {
       @apply text-[2rem] leading-[1.1];
     }
+button {
+  @apply cursor-pointer;
+}
 }

@@ -1,13 +1,13 @@
-import './styles.css';
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { CloudCogIcon, CodeIcon, DatabaseIcon, DownloadIcon, GithubIcon, MoveRight } from "lucide-react";
-import ProfileAvatar from "@/assets/images/profile_avatar_sample.png"
-import ColumnGridIcon from "@/assets/icons/column-grid.svg";
-import DockerIcon from "@/assets/icons/docker.svg";
-import Link from 'next/link';
-import ProjectList from "./components/ProjectList";
-import BlogPostsList from "./components/BlogPostsList";
+import './styles.css'
+import { Avatar, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { CloudCogIcon, CodeIcon, DatabaseIcon, DownloadIcon, GithubIcon, MoveRight } from 'lucide-react'
+import ProfileAvatar from '@/assets/images/profile_avatar_sample.png'
+import ColumnGridIcon from '@/assets/icons/column-grid.svg'
+import DockerIcon from '@/assets/icons/docker.svg'
+import Link from 'next/link'
+import ProjectList from './components/ProjectList'
+import BlogPostsList from './components/BlogPostsList'
 
 export default function Home() {
   return (
@@ -17,7 +17,15 @@ export default function Home() {
           <AvatarImage src={ProfileAvatar.src} />
         </Avatar>
         <h1>
-          Building digital products <br /> with <br /> performance and purpose.
+          Building digital products
+          {' '}
+          <br />
+          {' '}
+          with
+          {' '}
+          <br />
+          {' '}
+          performance and purpose.
         </h1>
         <p className="md:w-1/2 text-muted-foreground">
           Hi, I&apos;m Alex. A Full Stack Developer specializing in React,
@@ -64,7 +72,7 @@ export default function Home() {
           <h2 className="mb-6">Selected Work</h2>
           <p>A few projects I&apos;ve worked on recently.</p>
           <Link
-            href="/projects"
+            href="#"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >
             View all projects
@@ -78,7 +86,7 @@ export default function Home() {
           <h2 className="mb-6">Recent Writing</h2>
           <p>Thoughts on software architecture and engineering.</p>
           <Link
-            href="/blog"
+            href="#"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >
             Read the blog
@@ -88,5 +96,5 @@ export default function Home() {
         <BlogPostsList />
       </section>
     </main>
-  );
+  )
 }
