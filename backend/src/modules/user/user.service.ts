@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  forwardRef,
   Inject,
   Injectable,
   NotFoundException,
@@ -18,7 +17,7 @@ export class UserService implements CRUDService {
   constructor(
     @InjectRepository(User)
     private readonly userRespository: Repository<User>,
-    @Inject(forwardRef(() => HashingProvider))
+    @Inject(HashingProvider)
     private readonly hashingProvider: HashingProvider,
   ) {}
   async create(dto: CreateUserDTO): Promise<User> {
