@@ -9,12 +9,16 @@ import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
+import { httpClient } from '@/lib/http/http.client'
+import { useRouter } from 'next/navigation'
 
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string(),
 })
+type Payload = z.infer<typeof LoginSchema>
 export default function LoginPage() {
+  const router = useRouter()
   const formContext = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -22,6 +26,20 @@ export default function LoginPage() {
       password: '',
     },
   })
+
+  async function handleLogin(data: Payload) {
+    try {
+      await httpClient.request('/api/auth/login', {
+        baseUrl: '',
+        method: 'POST',
+        data,
+      })
+      router.push('/dashboard')
+    }
+    catch (error) {
+      console.error('LOGIN ERROR', error)
+    }
+  }
   return (
     <section className="flex flex-col gap-6">
       <header className="md:text-center">
@@ -43,7 +61,7 @@ export default function LoginPage() {
         </Button>
       </div>
       <FormProvider {...formContext}>
-        <form onSubmit={e => e.preventDefault()} className="w-full">
+        <form onSubmit={formContext.handleSubmit(handleLogin)} className="w-full">
           <fieldset className="flex flex-col gap-4 mb-3">
             <FormField
               control={formContext.control}
