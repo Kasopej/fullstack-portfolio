@@ -13,7 +13,6 @@ export class AuthService {
       },
     });
     if (data.user) {
-      console.log('user', data.user);
       return data.session;
     } else throw new RequestTimeoutException(error?.message);
   }
