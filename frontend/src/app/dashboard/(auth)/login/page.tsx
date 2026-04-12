@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   async function handleLogin(data: Payload) {
     try {
-      await httpClient.request('/api/auth/login', {
+      await httpClient.request('/api/auth/login-proxy', {
         baseUrl: '',
         method: 'POST',
         data,

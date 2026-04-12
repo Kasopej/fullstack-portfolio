@@ -1,4 +1,4 @@
-import Navbar from '@/components/Layout/Navbar/Navbar'
+import Navbar from '@/app/(guest)/components/Layout/Navbar/Navbar'
 
 export default function GuestLayout({
   children,
