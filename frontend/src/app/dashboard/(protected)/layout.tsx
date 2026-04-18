@@ -9,12 +9,12 @@ export default function DashboardLayout({
   return (
     <div className="dashboard-wrapper grid grid-cols-[min-content_1fr]">
       <AppSidebar />
-      <main className="dashboard-main relative h-dvh overflow-auto flex flex-col">
+      <div className="relative h-dvh overflow-auto flex flex-col">
         <Navbar />
-        <section className="p-8">
+        <div className="p-8">
           {children}
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   )
 }

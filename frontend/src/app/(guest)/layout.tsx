@@ -1,4 +1,5 @@
 import Navbar from '@/app/(guest)/components/Layout/Navbar/Navbar'
+import SessionTracker from '@/components/Analytics/SessionTracker'
 
 export default function GuestLayout({
   children,
@@ -8,7 +9,9 @@ export default function GuestLayout({
   return (
     <div className="min-h-dvh overflow-scroll flex flex-col bg-background">
       <Navbar />
-      {children}
+      <SessionTracker>
+        {children}
+      </SessionTracker>
       <footer></footer>
     </div>
   )
