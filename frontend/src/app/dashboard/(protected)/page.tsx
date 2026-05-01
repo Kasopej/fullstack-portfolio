@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { WebAnalyticsData } from '@/types/session-tracking.types'
 import { useImmer } from 'use-immer'
 import { notifyError } from '@/lib/utils/client/errors.utils'
+import { sleep } from '@/lib/utils'
 
 const formatOptions: Intl.NumberFormatOptions = {
   maximumFractionDigits: 2,
@@ -41,6 +42,9 @@ export default function Dashboard() {
       setLoading(false)
     })
   }, [filter.range])
+  if (Object.entries(webVitalsData).length === 0) {
+    return null
+  }
   return (
     <main className="w-full overflow-auto">
       <section className="w-full flex max-md:flex-wrap gap-6">
@@ -59,7 +63,7 @@ export default function Dashboard() {
       </section>
       <section className="w-full grid grid-cols-[2fr_1fr] gap-6 items-start mt-6">
         <div className="w-full p-6 rounded-xl bg-contrast text-contrast-foreground">
-          <p className="w-full gap-2 flex justify-between items-center mb-5">
+          <span className="w-full gap-2 flex justify-between items-center mb-5">
             <span className="text-lg font-semibold">Page Views</span>
             <Tabs>
               <TabsList>
@@ -67,7 +71,7 @@ export default function Dashboard() {
                 <TabsTrigger value="unique-visitors">Unique Visitors</TabsTrigger>
               </TabsList>
             </Tabs>
-          </p>
+          </span>
           {
             loading ? <BarChartSkeleton /> : <BarChart />
           }
