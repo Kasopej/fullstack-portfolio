@@ -11,6 +11,9 @@ import Link from 'next/link'
 import { Label } from '@/components/ui/label'
 import { httpClient } from '@/lib/http/http.client'
 import { useRouter } from 'next/navigation'
+import { Session } from '@supabase/supabase-js'
+import { useState } from 'react'
+import { toast } from 'sonner'
 
 const LoginSchema = z.object({
   email: z.email(),
@@ -26,18 +29,25 @@ export default function LoginPage() {
       password: '',
     },
   })
+  const [isLoading, setIsLoading] = useState(false)
 
   async function handleLogin(data: Payload) {
     try {
-      await httpClient.request('/api/auth/login-proxy', {
+      setIsLoading(true)
+      const authData = (await httpClient.request<Session>('/api/auth/login-proxy', {
         baseUrl: '',
         method: 'POST',
         data,
-      })
+      })).data
+      localStorage.setItem('accessToken', authData.access_token)
+      localStorage.setItem('refreshToken', authData.refresh_token)
       router.push('/dashboard')
     }
-    catch (error) {
-      console.error('LOGIN ERROR', error)
+    catch {
+      toast.error('Login failed')
+    }
+    finally {
+      setIsLoading(false)
     }
   }
   return (
@@ -99,10 +109,10 @@ export default function LoginPage() {
                 Remember me
               </Label>
             </span>
-            <Link href="/dashboard/forgot-password">Forgot password?</Link>
+            <Link data-analytics="" data-cta="" href="/dashboard/forgot-password">Forgot password?</Link>
           </div>
-          <Button className="w-full max-md:h-16 max-md:text-lg" type="submit" size="xl">
-            Sign in
+          <Button className="w-full max-md:h-16 max-md:text-lg" type="submit" size="xl" disabled={isLoading}>
+            {isLoading ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
       </FormProvider>

@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
   const cookieStore = await cookies()
-  const token = cookieStore.get('token')
+  const token = cookieStore.get('accessToken')
   if (!token?.value) {
     if (request.nextUrl.pathname === '/dashboard/login') return NextResponse.next()
     return NextResponse.redirect(new URL('/dashboard/login', request.url))

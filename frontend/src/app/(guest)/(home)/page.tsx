@@ -38,7 +38,7 @@ export default function Home() {
             <DownloadIcon className="size-4" />
           </Button>
           <Button variant="outline" asChild>
-            <a href="https://github.com/alexdotjs">
+            <a data-analytics="" data-cta="" href="https://github.com/alexdotjs">
               <GithubIcon className="size-4" />
               Github
             </a>
@@ -72,6 +72,8 @@ export default function Home() {
           <h2 className="mb-6">Selected Work</h2>
           <p>A few projects I&apos;ve worked on recently.</p>
           <Link
+            data-analytics=""
+            data-cta=""
             href="#"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >
@@ -86,6 +88,8 @@ export default function Home() {
           <h2 className="mb-6">Recent Writing</h2>
           <p>Thoughts on software architecture and engineering.</p>
           <Link
+            data-analytics=""
+            data-cta=""
             href="#"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >

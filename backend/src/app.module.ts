@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { UserModule } from './modules/user/user.module';
         DB_USER: Joi.string().required(),
         DB_PASSWD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        POSTHOG_API_KEY: Joi.string().required(),
       }),
       validationOptions: {
         allowUnknown: true,
@@ -46,6 +48,7 @@ import { UserModule } from './modules/user/user.module';
     }),
     AuthModule,
     UserModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

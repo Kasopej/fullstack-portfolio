@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import '@/assets/styles/global.css'
 import { ReduxProvider } from '@/context-providers/ReduxProvider'
+import { Toaster } from 'sonner'
 
 const interFontCss = Inter({
   variable: '--font-inter',
@@ -23,7 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${interFontCss.variable} antialiased`}>
-        <ReduxProvider>{children}</ReduxProvider>
+        <ReduxProvider>
+          <Toaster position="top-right" />
+          {children}
+        </ReduxProvider>
       </body>
     </html>
   )
