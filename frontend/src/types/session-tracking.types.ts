@@ -48,3 +48,5 @@ export interface TopSource {
   visitors: number
   change: Change
 }
+
+export type SessionQueryData<Column extends ReadonlyArray<unknown> = []> = [[...Column]]

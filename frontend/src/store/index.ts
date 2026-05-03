@@ -3,11 +3,11 @@ import { queryAPI } from '@/queries/api'
 
 export const makeStore = () => {
   return configureStore({
-     reducer: {
-    [queryAPI.reducerPath]: queryAPI.reducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(queryAPI.middleware),
+    reducer: {
+      [queryAPI.reducerPath]: queryAPI.reducer,
+    },
+    middleware: getDefaultMiddleware =>
+      getDefaultMiddleware().concat(queryAPI.middleware),
   })
 }
 

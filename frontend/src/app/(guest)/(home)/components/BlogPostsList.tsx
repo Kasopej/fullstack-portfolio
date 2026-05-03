@@ -1,7 +1,7 @@
 'use client'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetBlogPostsQuery } from '@/queries/endpoints/blog.queries'
+import { useGetBlogPostsQuery } from '@/queries/endpoints/blog.endpoints'
 import { DotIcon } from 'lucide-react'
 
 const SKeletonLoader = () => {

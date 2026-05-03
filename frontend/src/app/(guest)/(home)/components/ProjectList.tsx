@@ -1,6 +1,6 @@
 'use client'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useGetProjectsQuery } from '@/queries/endpoints/projects.queries'
+import { useGetProjectsQuery } from '@/queries/endpoints/projects.endpoints'
 import Image from 'next/image'
 
 const ProjectSKeletonLoader = () => {

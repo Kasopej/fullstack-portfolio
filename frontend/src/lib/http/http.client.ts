@@ -1,4 +1,5 @@
 import { duplicateRequestError } from '@/constants'
+import { notifyError } from '../utils/client/errors.utils'
 
 type FetchArgs = Parameters<typeof fetch>
 
@@ -20,7 +21,7 @@ type ResponseSuccessInterceptor<T = unknown> = (
 
 type ResponseErrorInterceptor = (error: unknown) => Promise<HTTPError> | HTTPError
 
-type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController }
+type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController, notifyOnError?: boolean, defaultError?: string }
 
 export class HTTPError {
   constructor(
@@ -119,13 +120,7 @@ class HttpClient {
       if (!response.ok) {
         const errorBody = await this.parseBody(response)
         const error = new HTTPError(response.status, response.statusText, errorBody)
-
-        let interceptedError = error
-        for (const errInterceptor of this.responseErrorInterceptors) {
-          interceptedError = (await errInterceptor(interceptedError) as typeof error)
-        }
-
-        throw interceptedError
+        throw error
       }
 
       let data: T = await this.parseBody(response)
@@ -147,6 +142,9 @@ class HttpClient {
       let interceptedError = new HTTPError(isOverrideError ? 0 : 500, '', err instanceof Error ? err.message : err)
       for (const errInterceptor of this.responseErrorInterceptors) {
         interceptedError = await errInterceptor(interceptedError)
+      }
+      if (init?.notifyOnError) {
+        notifyError(interceptedError, { fallback: init.defaultError })
       }
       throw interceptedError
     }

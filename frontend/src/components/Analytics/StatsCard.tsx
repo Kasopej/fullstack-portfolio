@@ -9,7 +9,7 @@ type Props = {
 }
 export default function StatsCard({ className, title, icon, children }: Props) {
   return (
-    <Card className={clsx('w-[260px] min-w-[200px] shrink gap-2', className)}>
+    <Card className={clsx('w-[260px] min-w-[180px] shrink gap-2', className)}>
       <CardHeader className="px-6">
         <CardTitle className="text-muted-foreground">
           <span className="flex items-center justify-between">

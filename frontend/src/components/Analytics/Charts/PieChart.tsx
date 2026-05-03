@@ -4,27 +4,26 @@ import { Chart, ChartConfiguration } from 'chart.js/auto'
 import { Skeleton } from '@/components/ui/skeleton'
 import merge from 'lodash-es/merge'
 
-export type BarChartProps = Omit<ChartConfiguration<'bar'>, 'type'>
+export type PieChartProps = Omit<ChartConfiguration<'pie'>, 'type'>
 type Props = {
   canvasProps?: React.CanvasHTMLAttributes<HTMLCanvasElement>
-  chartProps?: BarChartProps
+  chartProps?: PieChartProps
   className?: string
 }
-export default function BarChart({ canvasProps, chartProps, className }: Props) {
+export default function PieChart({ canvasProps, chartProps, className }: Props) {
   const ref = useRef<HTMLCanvasElement>(null)
   useEffect(() => {
-    Chart.defaults.datasets.bar.maxBarThickness = 40
     if (ref.current) {
       const currentRef = ref.current
-      const chart = new Chart(currentRef, merge({
-        type: 'bar',
+      const chart = new Chart(currentRef, merge<ChartConfiguration<'pie'>, PieChartProps | undefined>({
+        type: 'pie',
         data: { labels: [], datasets: [] },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
             },
           },
         },
@@ -43,13 +42,8 @@ export default function BarChart({ canvasProps, chartProps, className }: Props) 
   )
 }
 
-export function BarChartSkeleton() {
+export function PieChartSkeleton() {
   return (
-    <div className="relative w-full h-full min-h-[300px] grid grid-cols-4 items-end justify-center gap-4 p-4">
-      <Skeleton className="w-full h-48 rounded-md" />
-      <Skeleton className="w-full h-32 rounded-md" />
-      <Skeleton className="w-full h-40 rounded-md" />
-      <Skeleton className="w-full h-24 rounded-md" />
-    </div>
+    <Skeleton className="w-full h-48 rounded-full" />
   )
 }

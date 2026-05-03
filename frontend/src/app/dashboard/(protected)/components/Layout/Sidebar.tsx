@@ -11,7 +11,7 @@ export default function AppSidebar() {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <Link href="/" className="inline-flex gap-2 items-center">
+          <Link data-analytics={null} data-cta={null} href="/" className="inline-flex gap-2 items-center">
             <Image src={AppLogo} alt="App logo" className="size-8" />
             <span className="font-bold text-xl">PortfoliOS</span>
           </Link>
@@ -22,13 +22,13 @@ export default function AppSidebar() {
               menu.map((menuItem) => {
                 return isGroup(menuItem)
                   ? (
-                      <SidebarGroup>
+                      <SidebarGroup key={menuItem.title}>
                         <SidebarGroupLabel className="text-foreground uppercase">
                           {menuItem.title}
                         </SidebarGroupLabel>
                         <SidebarGroupContent>
                           {menuItem.items.map(menuChildItem => (
-                            <SidebarMenuItem key={menuChildItem.id}>
+                            <SidebarMenuItem key={menuChildItem.title}>
                               <SidebarMenuLink menu={menuChildItem}>{menuChildItem.title}</SidebarMenuLink>
                             </SidebarMenuItem>
                           ))}
@@ -36,7 +36,7 @@ export default function AppSidebar() {
                       </SidebarGroup>
                     )
                   : (
-                      <SidebarMenuItem key={menuItem.id}>
+                      <SidebarMenuItem key={menuItem.title}>
                         <SidebarMenuLink menu={menuItem}>{menuItem.title}</SidebarMenuLink>
                       </SidebarMenuItem>
                     )
