@@ -21,7 +21,6 @@ export async function pageviewsQuery({
   range,
   timezone = 'UTC',
 }: PageViewQueryDto) {
-  console.log({ timezone });
   try {
     const config = {
       daily: {
@@ -50,7 +49,6 @@ export async function pageviewsQuery({
       },
     }[range];
     if (!config) return [];
-    console.log({ config });
 
     const payload = {
       query: {
@@ -83,8 +81,7 @@ export async function pageviewsQuery({
       throw new Error(data.code);
     }
     return data.results;
-  } catch (error) {
-    console.log(error);
+  } catch {
     throw new InternalServerErrorException('Posthog query failed');
   }
 }
