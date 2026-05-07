@@ -5,10 +5,11 @@ import { httpClient } from '@/lib/http/http.client'
 export type PageViewHistoryFilter = 'daily' | 'weekly' | 'monthly'
 const analyticsEndpoints = queryAPI.injectEndpoints({
   endpoints: build => ({
-    getPageViewsHistoricalData: build.query<SessionQueryData<[string, number]>, { days: PageViewHistoryFilter }>({
-      queryFn: async ({ days }) => {
+    getPageViewsHistoricalData: build.query<SessionQueryData<[string, number]>, { range: PageViewHistoryFilter }>({
+      queryFn: async ({ range }) => {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         try {
-          const { data } = await httpClient.request<SessionQueryData<[string, number]>>(`/analytics/sessions-historical-data?days=${days}`, {
+          const { data } = await httpClient.request<SessionQueryData<[string, number]>>(`/analytics/sessions-historical-data?range=${range}&timezone=${timezone}`, {
             notifyOnError: true,
             defaultError: 'Failed to fetch web analytics data',
           })
@@ -19,10 +20,11 @@ const analyticsEndpoints = queryAPI.injectEndpoints({
         }
       },
     }),
-    getPageViewsPerDeviceType: build.query<SessionQueryData<[string, number]>, { days: PageViewHistoryFilter }>({
-      queryFn: async ({ days }) => {
+    getPageViewsPerDeviceType: build.query<SessionQueryData<[string, number]>, { range: PageViewHistoryFilter }>({
+      queryFn: async ({ range }) => {
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
         try {
-          const { data } = await httpClient.request<SessionQueryData<[string, number]>>(`/analytics/sessions-per-device-type?days=${days}`, {
+          const { data } = await httpClient.request<SessionQueryData<[string, number]>>(`/analytics/sessions-per-device-type?range=${range}&timezone=${timezone}`, {
             notifyOnError: true,
             defaultError: 'Failed to fetch web analytics data',
           })

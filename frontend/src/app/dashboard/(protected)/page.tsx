@@ -24,23 +24,35 @@ export default function Dashboard() {
     range: 'weekly',
   })
   const { data: pageViewsHistoricalData, isLoading: isLoadingPageViewsHistoricalData, isFetching: isFetchingPageViewsHistoricalData } = useGetPageViewsHistoricalDataQuery({
-    days: filter.range,
+    range: filter.range,
   })
   const { data: pageViewsPerDeviceTypeData, isLoading: isLoadingPageViewsPerDeviceType, isFetching: isFetchingPageViewsPerDeviceType } = useGetPageViewsPerDeviceTypeQuery({
-    days: 'monthly',
+    range: 'monthly',
   })
   const formatLabel = useCallback((date: string) => {
     switch (filter.range) {
       case 'daily':
         return Intl.DateTimeFormat(undefined, { timeStyle: 'short' }).format(new Date(date))
       case 'weekly':
-        return Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(parse(date, 'yyyy-MM-dd', new Date()))
+        return Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(new Date(date))
       case 'monthly':
-        return Intl.DateTimeFormat(undefined, { month: 'short' }).format(parse(date, 'yyyy-MM-dd', new Date()))
+        return Intl.DateTimeFormat(undefined, { month: 'short' }).format(new Date(date))
       default:
         return date
     }
   }, [filter.range])
+  const formatTooltip = useCallback((date: string) => {
+    switch (filter.range) {
+      case 'daily':
+        return new Date(date).toLocaleString()
+      case 'weekly':
+        return formatLabel(date)
+      case 'monthly':
+        return formatLabel(date)
+      default:
+        return date
+    }
+  }, [filter.range, formatLabel])
   const pageViewsHistoricalDataChartConfig = useMemo<BarChartProps>(() => {
     return {
       data: {
@@ -61,9 +73,18 @@ export default function Dashboard() {
             },
           },
         },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              title: (context) => {
+                return formatTooltip(pageViewsHistoricalData?.[context[0].dataIndex]?.[0] || '')
+              },
+            },
+          },
+        },
       },
     }
-  }, [pageViewsHistoricalData, formatLabel])
+  }, [pageViewsHistoricalData, formatLabel, formatTooltip])
   const pageViewsPerDeviceTypeDataChartConfig = useMemo<PieChartProps>(() => {
     const total = pageViewsPerDeviceTypeData?.reduce((acc, data) => acc + data[1], 0) || 0
     return {
