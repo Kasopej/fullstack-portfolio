@@ -1,4 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
+import { PageViewQueryDto } from './analytics.dto';
 
 const url = 'https://eu.posthog.com/api/projects/169348/query/';
 const headers = {
@@ -16,13 +17,15 @@ type PosthogQueryResponse<Column extends ReadonlyArray<unknown> = []> = {
   code?: string;
 };
 
-export type PageViewQueryFilter = 'daily' | 'weekly' | 'monthly';
-
-export async function pageviewsQuery(filter: PageViewQueryFilter) {
+export async function pageviewsQuery({
+  range,
+  timezone = 'UTC',
+}: PageViewQueryDto) {
+  console.log({ timezone });
   try {
     const config = {
       daily: {
-        select: 'toStartOfHour(timestamp) AS period',
+        select: `toStartOfHour(toTimeZone(timestamp, '${timezone}')) AS period`,
         where: `
           timestamp >= now() - INTERVAL 24 HOUR
           AND timestamp < now()
@@ -30,7 +33,7 @@ export async function pageviewsQuery(filter: PageViewQueryFilter) {
         name: 'hourly pageviews (last 24h)',
       },
       weekly: {
-        select: 'toDate(timestamp) AS period',
+        select: `toDate(toTimeZone(timestamp, '${timezone}')) AS period`,
         where: `
           timestamp >= date_trunc('week', now())
           AND timestamp < date_trunc('week', now()) + INTERVAL 1 WEEK
@@ -38,14 +41,16 @@ export async function pageviewsQuery(filter: PageViewQueryFilter) {
         name: 'daily pageviews (Mon-Sun)',
       },
       monthly: {
-        select: 'toStartOfMonth(timestamp) AS period',
+        select: `toStartOfMonth(toTimeZone(timestamp, '${timezone}')) AS period`,
         where: `
           timestamp >= date_trunc('month', now()) - INTERVAL 11 MONTH
           AND timestamp < date_trunc('month', now()) + INTERVAL 1 MONTH
         `,
         name: 'monthly pageviews (last 12 months)',
       },
-    }[filter];
+    }[range];
+    if (!config) return [];
+    console.log({ config });
 
     const payload = {
       query: {
@@ -74,14 +79,17 @@ export async function pageviewsQuery(filter: PageViewQueryFilter) {
     const data = (await response.json()) as PosthogQueryResponse<
       [string, number]
     >;
-    if (!data.results) throw new Error(data.code);
+    if (!Array.isArray(data.results)) {
+      throw new Error(data.code);
+    }
     return data.results;
-  } catch {
+  } catch (error) {
+    console.log(error);
     throw new InternalServerErrorException('Posthog query failed');
   }
 }
 
-export async function pageviewsQueryByDevice(filter: PageViewQueryFilter) {
+export async function pageviewsQueryByDevice({ range }: PageViewQueryDto) {
   try {
     const config = {
       daily: {
@@ -105,7 +113,8 @@ export async function pageviewsQueryByDevice(filter: PageViewQueryFilter) {
         `,
         name: 'pageviews by device type (last 12 months)',
       },
-    }[filter];
+    }[range];
+    if (!config) return [];
 
     const payload = {
       query: {
@@ -134,7 +143,6 @@ export async function pageviewsQueryByDevice(filter: PageViewQueryFilter) {
     const data = (await response.json()) as PosthogQueryResponse<
       [string, number]
     >;
-    console.log(data);
     if (!data.results) throw new Error(data.code);
     return data.results;
   } catch {
