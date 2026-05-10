@@ -1,5 +1,5 @@
-import Navbar from './components/Layout/Navbar'
-import AppSidebar from './components/Layout/Sidebar'
+import Navbar from './Navbar'
+import AppSidebar from './Sidebar'
 
 export default function DashboardLayout({
   children,
