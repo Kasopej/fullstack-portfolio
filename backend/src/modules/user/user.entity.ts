@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Project } from '../project/project.entity';
 
 @Entity('user')
 export class User {
@@ -39,4 +40,7 @@ export class User {
   })
   @Exclude()
   password?: string;
+
+  @OneToMany(() => Project, (project) => project.author)
+  projects: Project[];
 }

@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import type { User } from '../user.entity';
 
-class BaseUserDto implements Omit<User, 'id'> {
+class BaseUserDto implements Omit<User, 'id' | 'projects'> {
   @MaxLength(96)
   @MinLength(4)
   @IsString()

@@ -7,6 +7,7 @@ import Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
+import { ProjectModule } from './modules/project/project.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { AnalyticsModule } from './modules/analytics/analytics.module';
     AuthModule,
     UserModule,
     AnalyticsModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
