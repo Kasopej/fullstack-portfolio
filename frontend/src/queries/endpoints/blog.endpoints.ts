@@ -8,7 +8,7 @@ const blogEndpoints = queryAPI.injectEndpoints({
     getBlogPosts: build.query<BlogPost[], void>({
       async queryFn() {
         try {
-          const { data } = await httpClient.request<PaginatedResponse<BlogPost>>(`/posts`, {
+          const { data } = await httpClient.request<PaginatedResponse<BlogPost>>(`/blog-post`, {
             notifyOnError: true,
             defaultError: 'Failed to fetch posts',
           })

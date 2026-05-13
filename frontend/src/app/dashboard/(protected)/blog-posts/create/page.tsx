@@ -7,81 +7,81 @@ import dynamic from 'next/dynamic'
 import { FormProvider, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import z from 'zod'
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
+import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { httpClient } from '@/lib/http/http.client'
 import { notifyError } from '@/lib/utils/client/errors.utils'
-import { CreateProjectSchema, Project, Skill } from '@/schemas'
+import { BlogPost, CreateBlogPostSchema, Skill, Tag } from '@/schemas'
 import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxContent, ComboboxItem, ComboboxList, Value } from '@/components/ui/combobox'
 import { useDebounce } from 'use-debounce'
-import { ExternalLinkIcon, GithubIcon, Loader2Icon } from 'lucide-react'
+import { Loader2Icon } from 'lucide-react'
 import { FileUploader } from '@/components/File/FileUploader'
 import { uniqBy } from 'lodash-es'
 
 const HtmlEditor = dynamic(() => import('@/components/Editors/HtmlEditor'), { ssr: false })
 
-export default function CreateProjectPage() {
+export default function CreatePostPage() {
   const formContext = useForm({
-    resolver: zodResolver(CreateProjectSchema),
+    resolver: zodResolver(CreateBlogPostSchema),
     defaultValues: {
       title: '',
       description: '',
       html: '',
-      skills: [],
+      tags: [],
     },
   })
 
-  const [skillsSearch, setSkillsSearch] = useState('')
-  const [isLoadingSkills, setIsLoadingSkills] = useState(false)
-  const [debouncedSkillsSearch] = useDebounce(skillsSearch, 1000)
-  const [availableSkills, setAvailableSkills] = useState<Skill[]>([])
-  const selectedSkills = formContext.watch('skills')
+  const [tagsSearch, setTagsSearch] = useState('')
+  const [isLoadingTags, setIsLoadingTags] = useState(false)
+  const [debouncedTagsSearch] = useDebounce(tagsSearch, 1000)
+  const [availableTags, setAvailableTags] = useState<Tag[]>([])
+  const selectedTags = formContext.watch('tags')
   const coverImage = formContext.watch('coverImage')
 
-  const filteredSkills = useMemo(
+  const filteredTags = useMemo(
     () =>
-      availableSkills.filter(skill =>
-        !selectedSkills.some(selectedSkill => selectedSkill.label === skill.name),
+      availableTags.filter(tag =>
+        !selectedTags.some(selectedTag => selectedTag.label === tag.name),
       ),
-    [availableSkills, selectedSkills],
+    [availableTags, selectedTags],
   )
   const searchSkills = useCallback(async () => {
-    if (!debouncedSkillsSearch) {
-      setAvailableSkills([])
+    if (!debouncedTagsSearch) {
+      setAvailableTags([])
       return
     }
     try {
-      setIsLoadingSkills(true)
-      const response = await httpClient.request<Skill[]>('/skills', {
+      setIsLoadingTags(true)
+      const response = await httpClient.request<Skill[]>('/tags', {
         method: 'GET',
         params: {
-          name: debouncedSkillsSearch,
+          name: debouncedTagsSearch,
         },
       })
-      setAvailableSkills(uniqBy(response.data.concat({ name: debouncedSkillsSearch }), 'name'))
+      setAvailableTags(uniqBy(response.data.concat({ name: debouncedTagsSearch }), 'name'))
     }
     catch (error) {
       notifyError(error)
     }
     finally {
-      setIsLoadingSkills(false)
+      setIsLoadingTags(false)
     }
-  }, [debouncedSkillsSearch])
+  }, [debouncedTagsSearch])
 
   useEffect(() => {
     searchSkills()
   }, [searchSkills])
   const anchorRef = useRef<HTMLDivElement>(null)
 
-  const submitProject = useCallback(async (data: z.infer<typeof CreateProjectSchema>) => {
-    const formattedData: Omit<Project, 'id' | 'createdAt' | 'updatedAt'> = {
+  const submitPost = useCallback(async (data: z.infer<typeof CreateBlogPostSchema>) => {
+    const formattedData: Omit<BlogPost, 'id' | 'author' | 'createdAt' | 'updatedAt'> = {
       ...data,
-      skills: data.skills.map(skill => ({
-        name: skill.label,
+      tags: data.tags.map(tag => ({
+        name: tag.label,
       })),
     }
     try {
-      await httpClient.request('/projects', {
+      await httpClient.request('/blog-post', {
         method: 'POST',
         data: formattedData,
       })
@@ -93,12 +93,12 @@ export default function CreateProjectPage() {
   return (
     <main className="grid lg:grid-cols-[1fr_280px] gap-8">
       <PageToolbar>
-        <Button size="lg" form="project-form" type="submit" disabled={!formContext.formState.isValid}>
-          Publish Project
+        <Button size="lg" form="post-form" type="submit" disabled={!formContext.formState.isValid}>
+          Publish Post
         </Button>
       </PageToolbar>
       <FormProvider {...formContext}>
-        <form id="project-form" className="project-details w-full flex flex-col gap-4" onSubmit={formContext.handleSubmit(submitProject)}>
+        <form id="post-form" className="post-details w-full flex flex-col gap-4" onSubmit={formContext.handleSubmit(submitPost)}>
           <FormField
             control={formContext.control}
             name="title"
@@ -107,7 +107,7 @@ export default function CreateProjectPage() {
                 <FormControl>
                   <Input
                     className="p-4 w-full border-none border-b font-bold text-3xl"
-                    placeholder="Project Title (e.g Fintrack Saas)"
+                    placeholder="Post Title (e.g My First Blog Post)"
                     {...field}
                   />
                 </FormControl>
@@ -118,7 +118,7 @@ export default function CreateProjectPage() {
           </FormField>
           <Card>
             <CardHeader>
-              <CardTitle>Project Description</CardTitle>
+              <CardTitle>Post Description</CardTitle>
             </CardHeader>
             <CardContent>
               <FormField
@@ -127,7 +127,7 @@ export default function CreateProjectPage() {
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <textarea className="w-full h-30 p-4 bg-background" placeholder="Project Description" {...field} />
+                      <textarea className="w-full h-30 p-4 bg-background" placeholder="Post Description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,7 +138,7 @@ export default function CreateProjectPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Project Details (Architecture, challenges, diagrams, impact etc.)</CardTitle>
+              <CardTitle>Post Content</CardTitle>
             </CardHeader>
             <CardContent>
               <FormField
@@ -157,27 +157,27 @@ export default function CreateProjectPage() {
             </CardContent>
           </Card>
         </form>
-        <section className="project-meta flex flex-col gap-6">
+        <section className="post-meta flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle className="pb-4 border-b border-input">Tech Stack</CardTitle>
+              <CardTitle className="pb-4 border-b border-input">Tags</CardTitle>
             </CardHeader>
             <CardContent>
               <FormField
                 control={formContext.control}
-                name="skills"
+                name="tags"
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Combobox
-                        items={filteredSkills.map(item => ({ value: item.name, label: item.name }))}
+                        items={filteredTags.map(item => ({ value: item.name, label: item.name }))}
                         multiple
                         value={field.value}
                         onValueChange={(values) => {
                           console.log({ values })
                           field.onChange(values)
                         }}
-                        onInputValueChange={setSkillsSearch}
+                        onInputValueChange={setTagsSearch}
                       >
                         <ComboboxChips ref={anchorRef}>
                           {field.value?.map(item => (
@@ -186,7 +186,7 @@ export default function CreateProjectPage() {
                             </ComboboxChip>
                           ))}
                           <ComboboxChipsInput placeholder="Add..." />
-                          {isLoadingSkills && <Loader2Icon className="ml-auto text-primary animate-spin" />}
+                          {isLoadingTags && <Loader2Icon className="ml-auto text-primary animate-spin" />}
                         </ComboboxChips>
 
                         <ComboboxContent anchor={anchorRef}>
@@ -199,41 +199,6 @@ export default function CreateProjectPage() {
                           </ComboboxList>
                         </ComboboxContent>
                       </Combobox>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              >
-              </FormField>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="pb-4 border-b border-input">Project Links</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              <FormField
-                control={formContext.control}
-                name="projectUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Project URL</FormLabel>
-                    <FormControl>
-                      <Input className="bg-background" placeholder="https://example.com" prefixEl={<ExternalLinkIcon className="size-3.5" />} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              >
-              </FormField>
-              <FormField
-                control={formContext.control}
-                name="repoUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Repo</FormLabel>
-                    <FormControl>
-                      <Input className="bg-background" placeholder="https://github.com/..." prefixEl={<GithubIcon className="size-3.5" />} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

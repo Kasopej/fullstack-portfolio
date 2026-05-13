@@ -14,12 +14,9 @@ import { useRouter } from 'next/navigation'
 import { Session } from '@supabase/supabase-js'
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { User } from '@/types/auth.types'
 
-interface AuthenticationResponse extends Omit<Session, 'user'> {
-  firstName: string
-  lastName: string
-  email: string
-}
+type AuthenticationResponse = Omit<Session, 'user'> & User
 
 const LoginSchema = z.object({
   email: z.email(),
