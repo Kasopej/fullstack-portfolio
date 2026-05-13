@@ -42,10 +42,10 @@ export class Project {
   @Column({
     length: 256,
     type: 'varchar',
-    nullable: true,
+    nullable: false,
     name: 'cover_image',
   })
-  coverImage?: string;
+  coverImage: string;
 
   @ManyToOne(() => User, { cascade: false, eager: false })
   @JoinColumn({ name: 'author_id' })

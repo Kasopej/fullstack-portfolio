@@ -6,6 +6,6 @@ export default async function GuestProjectDetailPage({ params }: { params: Promi
   const { projectId } = await params
   const projectPromise = httpClient.request<Project>(`/projects/${projectId}`)
   return (
-    <ProjectDetail className="page home p-6" data={projectPromise.then(response => response.data).catch(() => null)} />
+    <ProjectDetail className="page" data={projectPromise.then(response => response.data).catch(() => null)} />
   )
 }

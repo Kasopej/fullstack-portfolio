@@ -31,10 +31,9 @@ class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags'> {
   @IsString()
   html: string = '';
 
-  @IsOptional()
   @IsUrl()
   @IsString()
-  coverImage?: string;
+  coverImage: string;
 
   @Type(() => User)
   author: User;

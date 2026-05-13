@@ -133,6 +133,9 @@
   * {
     @apply border-border outline-ring/50;
   }
+        .page {
+          @apply p-6;
+        }
 
   body {
     font-family: var(--font-inter);

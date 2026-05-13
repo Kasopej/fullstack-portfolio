@@ -30,10 +30,9 @@ class BaseProjectDto implements Omit<Project, 'id' | 'skills'> {
   @IsString()
   html: string = '';
 
-  @IsOptional()
   @IsUrl()
   @IsString()
-  coverImage?: string;
+  coverImage: string;
 
   @Type(() => User)
   author: User;

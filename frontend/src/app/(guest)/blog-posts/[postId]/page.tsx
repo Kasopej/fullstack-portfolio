@@ -6,6 +6,6 @@ export default async function GuestProjectDetailPage({ params }: { params: Promi
   const { postId } = await params
   const postPromise = httpClient.request<BlogPost>(`/blog-post/${postId}`)
   return (
-    <BlogPostDetail className="page home p-6" data={postPromise.then(response => response.data).catch(() => null)} />
+    <BlogPostDetail className="page" data={postPromise.then(response => response.data).catch(() => null)} />
   )
 }

@@ -1,8 +1,7 @@
 import './styles.css'
 import { Avatar, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { CloudCogIcon, CodeIcon, DatabaseIcon, DownloadIcon, GithubIcon, MoveRight } from 'lucide-react'
-import ProfileAvatar from '@/assets/images/profile_avatar_sample.png'
+import { CodeIcon, DatabaseIcon, GithubIcon, MoveRight } from 'lucide-react'
 import ColumnGridIcon from '@/assets/icons/column-grid.svg'
 import DockerIcon from '@/assets/icons/docker.svg'
 import Link from 'next/link'
@@ -14,7 +13,7 @@ export default function Home() {
     <main className="page home">
       <section className="hero max-xl:w-2/3 w-3/4 mx-auto pt-30 pb-20 flex flex-col items-center gap-12 text-center whitespace-pre-wrap">
         <Avatar className="size-22!">
-          <AvatarImage src={ProfileAvatar.src} />
+          <AvatarImage src="/me.jpg" />
         </Avatar>
         <h1>
           Building digital products
@@ -28,17 +27,18 @@ export default function Home() {
           performance and purpose.
         </h1>
         <p className="md:w-1/2 text-muted-foreground">
-          Hi, I&apos;m Alex. A Full Stack Developer specializing in React,
-          Node.js, and cloud architecture. I build accessible, pixel- perfect,
+          Hi, I&apos;m Kasope. A Full Stack Developer specializing in React,
+          Node.js, and Nestjs. I build accessible, pixel- perfect,
           and performant web applications.
         </p>
         <div className="flex items-center gap-2 flex-wrap">
-          <Button className="bg-green-800 text-white">
-            View my work
-            <DownloadIcon className="size-4" />
-          </Button>
+          <Link href="/projects" data-analytics="" data-cta="">
+            <Button className="bg-green-800 text-white">
+              View my work
+            </Button>
+          </Link>
           <Button variant="outline" asChild>
-            <a data-analytics="" data-cta="" href="https://github.com/alexdotjs">
+            <a data-analytics="" data-cta="" href="https://github.com/Kasopej">
               <GithubIcon className="size-4" />
               Github
             </a>
@@ -49,6 +49,10 @@ export default function Home() {
         <li>
           <CodeIcon />
           Next.js
+        </li>
+        <li>
+          <CodeIcon />
+          Nestjs
         </li>
         <li>
           <DatabaseIcon />
@@ -62,10 +66,6 @@ export default function Home() {
           <DockerIcon />
           Docker
         </li>
-        <li>
-          <CloudCogIcon />
-          Deployment
-        </li>
       </ul>
       <section className="px-6 py-12">
         <header className="w-full flex flex-col gap-1 mb-10">
@@ -74,7 +74,7 @@ export default function Home() {
           <Link
             data-analytics=""
             data-cta=""
-            href="#"
+            href="/projects"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >
             View all projects
@@ -90,7 +90,7 @@ export default function Home() {
           <Link
             data-analytics=""
             data-cta=""
-            href="#"
+            href="/blog-posts"
             className="md:self-end inline-flex items-center gap-2 text-contrast-foreground font-semibold"
           >
             Read the blog

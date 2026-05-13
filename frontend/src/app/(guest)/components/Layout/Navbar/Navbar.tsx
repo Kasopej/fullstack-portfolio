@@ -7,7 +7,7 @@ import Link from 'next/link'
 export default function Navbar() {
   return (
     <nav className="w-full bg-navbar text-navbar-foreground flex items-center justify-between py-4 px-12">
-      <Link href="/" className="inline-flex gap-2 items-center">
+      <Link data-analytics="" data-cta="" href="/" className="inline-flex gap-2 items-center">
         <Image src={AppLogo} alt="App logo" className="size-8" />
         <span className="font-bold text-xl">PortfoliOS</span>
       </Link>
@@ -19,18 +19,15 @@ export default function Navbar() {
           <NavLink href="/projects">Projects</NavLink>
         </li>
         <li>
-          <NavLink href="/blog">Blog</NavLink>
-        </li>
-        <li>
-          <NavLink href="/about">About</NavLink>
+          <NavLink href="/blog-posts">Blog</NavLink>
         </li>
       </ul>
       <div className="ml-auto inline-flex gap-4 items-center">
-        <Link href="/dashboard/login" className="text-muted-foreground">
+        <Link data-analytics="" data-cta="" href="/dashboard/login" className="text-muted-foreground">
           Sign In
         </Link>
         <Button asChild className="bg-green-800 text-white" size="lg">
-          <Link href="/contact">Contact Me</Link>
+          <Link data-analytics="" data-cta="" href="/contact">Contact Me</Link>
         </Button>
       </div>
     </nav>

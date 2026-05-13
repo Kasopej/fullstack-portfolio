@@ -1,8 +1,8 @@
 import ProjectList from '../components/ProjectList'
 
-export function GuestProjectsPage() {
+export default function GuestProjectsPage() {
   return (
-    <main className="page home">
+    <main className="page">
       <ProjectList />
     </main>
   )
