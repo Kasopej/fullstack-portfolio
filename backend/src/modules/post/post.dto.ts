@@ -11,7 +11,7 @@ import {
 import { User } from 'src/modules/user/user.entity';
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { PaginationDto } from 'src/providers/pagination/pagination.dto';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { Post } from './post.entity';
 import { CreateTagDTO } from '../tag/tag.dto';
 import { DTOFromEntity } from 'src/types';
@@ -43,6 +43,9 @@ class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags'> {
   @ValidateNested({ each: true })
   @Type(() => CreateTagDTO)
   tags: CreateTagDTO[];
+
+  @Transform(({ value }) => (value as bigint).toString())
+  estimatedReadingTime?: bigint;
 }
 
 export class CreatePostDTO extends BasePostDto {}

@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Tag } from './tag.entity';
-import { CreateTagDTO } from './tag.dto';
-import { In, Repository } from 'typeorm';
+import { CreateTagDTO, QueryTagDTO } from './tag.dto';
+import { ILike, In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -26,7 +26,19 @@ export class TagService {
       throw new InternalServerErrorException('Could not find skill');
     });
   }
-  public async findAll() {}
+  public async findAll(query?: QueryTagDTO) {
+    return this.repository
+      .find({
+        where: query
+          ? {
+              name: query.name ? ILike(`%${query.name}%`) : undefined,
+            }
+          : {},
+      })
+      .catch(() => {
+        throw new InternalServerErrorException();
+      });
+  }
 
   public async resolveTags(
     dtos: CreateTagDTO[],

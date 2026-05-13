@@ -33,7 +33,8 @@ export class PostService implements CRUDService {
     });
     const estimatedReadingTime = this.calculateEstimatedReadingTime(dto.html);
     post.estimatedReadingTime = estimatedReadingTime;
-    return this.repository.save(post).catch(async () => {
+    return this.repository.save(post).catch(async (error) => {
+      console.error(error);
       throw new InternalServerErrorException();
     });
   }
@@ -61,9 +62,16 @@ export class PostService implements CRUDService {
   }
 
   public async findById(id: number) {
-    const post = await this.repository.findOneBy({ id }).catch(() => {
-      throw new InternalServerErrorException('Could not find post');
-    });
+    const post = await this.repository
+      .findOne({
+        where: { id },
+        relations: {
+          author: true,
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Could not find post');
+      });
     if (post) return post;
     throw new NotFoundException('Could not find post');
   }
@@ -78,7 +86,11 @@ export class PostService implements CRUDService {
 
   public async findAll(query?: QueryPostDTO): Promise<PaginatedResponse<Post>> {
     return this.paginationService
-      .paginateQuery(this.repository, query, {})
+      .paginateQuery(this.repository, query, {
+        relations: {
+          author: true,
+        },
+      })
       .catch(() => {
         throw new InternalServerErrorException('No posts found');
       });

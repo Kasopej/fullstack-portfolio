@@ -65,9 +65,16 @@ export class ProjectService implements CRUDService {
   }
 
   public async findById(id: number) {
-    const project = await this.repository.findOneBy({ id }).catch(() => {
-      throw new InternalServerErrorException('Could not find project');
-    });
+    const project = await this.repository
+      .findOne({
+        where: { id },
+        relations: {
+          author: true,
+        },
+      })
+      .catch(() => {
+        throw new InternalServerErrorException('Could not find project');
+      });
     if (project) return project;
     throw new NotFoundException('Could not find project');
   }
@@ -84,7 +91,11 @@ export class ProjectService implements CRUDService {
     query?: QueryProjectDTO,
   ): Promise<PaginatedResponse<Project>> {
     return this.paginationService
-      .paginateQuery(this.repository, query, {})
+      .paginateQuery(this.repository, query, {
+        relations: {
+          author: true,
+        },
+      })
       .catch(() => {
         throw new InternalServerErrorException('No projects found');
       });

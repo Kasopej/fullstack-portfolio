@@ -1,4 +1,4 @@
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 import { Tag } from './tag.entity';
 
 class BaseTagDto implements Omit<Tag, 'id' | 'posts'> {
@@ -9,3 +9,9 @@ class BaseTagDto implements Omit<Tag, 'id' | 'posts'> {
 }
 
 export class CreateTagDTO extends BaseTagDto {}
+
+export class QueryTagDTO implements Partial<BaseTagDto> {
+  @IsOptional()
+  @IsString()
+  name?: string;
+}

@@ -21,16 +21,17 @@ import { User } from '../user/user.entity';
 import { SupabaseAuthGuard } from '../auth/guards/supabase.guard';
 
 @Controller('projects')
-@UseGuards(SupabaseAuthGuard)
 export class ProjectController implements CRUDController {
   constructor(private readonly service: ProjectService) {}
 
   @Post()
+  @UseGuards(SupabaseAuthGuard)
   async create(@Body() body: CreateProjectDTO, @ActiveUser() user: User) {
     return this.service.create(body, user);
   }
 
   @Patch(':id')
+  @UseGuards(SupabaseAuthGuard)
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateProjectDTO,

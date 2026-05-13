@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Exclude } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { Tag } from '../tag/tag.entity';
 
 @Entity('posts')
@@ -43,7 +43,7 @@ export class Post {
   html: string;
 
   @Column({
-    length: 96,
+    length: 256,
     type: 'varchar',
     nullable: true,
     name: 'cover_image',
@@ -53,7 +53,6 @@ export class Post {
   @ManyToOne(() => User, { cascade: false, eager: false })
   @JoinColumn({ name: 'author_id' })
   author: User;
-  @Exclude()
   @ManyToMany(() => Tag, (tag) => tag.posts, {
     eager: true,
   })
@@ -70,6 +69,7 @@ export class Post {
   })
   tags: Tag[];
 
+  @Transform(({ value }) => (value as bigint).toString())
   @Column({
     type: 'bigint',
     nullable: true,
