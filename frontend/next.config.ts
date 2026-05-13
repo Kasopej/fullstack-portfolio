@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   // webpack(config: WebpackConfig) {
@@ -66,18 +66,30 @@ const nextConfig: NextConfig = {
   //     return config
   //   },
   turbopack: {
-      rules: {
-        '*.svg': {
-          condition: {
-        not: {
-          query: /[?&]url$/
+    rules: {
+      '*.svg': {
+        condition: {
+          not: {
+            query: /[?&]url$/,
+          },
         },
-      },
-          loaders: ['@svgr/webpack'],
-          as: '*.ts',
-        },
+        loaders: ['@svgr/webpack'],
+        as: '*.ts',
       },
     },
-};
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+    ],
+  },
+}
 
-export default nextConfig;
+export default nextConfig

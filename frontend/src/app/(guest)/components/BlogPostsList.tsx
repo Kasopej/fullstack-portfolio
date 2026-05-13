@@ -2,6 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useGetBlogPostsQuery } from '@/queries/endpoints/blog.endpoints'
+import { millisecondsToMinutes } from 'date-fns'
 import { DotIcon } from 'lucide-react'
 
 const SKeletonLoader = () => {
@@ -24,11 +25,11 @@ export default function BlogPostsList() {
         <Card key={project.id} className="bg-inherit w-full">
           <CardContent className="flex flex-col gap-4">
             <p className="inline-flex items-center gap-2">
-              {project.date}
+              {project.createdAt}
               <DotIcon className="size-4" />
-              {project.estimatedReadingTime}
-              {' '}
-              min read
+              {project.estimatedReadingTime
+                ? `${millisecondsToMinutes(project.estimatedReadingTime)} minutes`
+                : ''}
             </p>
             <h4>{project.title}</h4>
             <p>{project.description}</p>

@@ -1,18 +1,23 @@
-import { queryAPI } from '../api'
+import { httpClient } from '@/lib/http/http.client'
+import { formatErrorForRTK, queryAPI } from '../api'
+import { PaginatedResponse } from '@/types'
+import { BlogPost } from '@/schemas'
 
-export type Blog = {
-  id: string
-  title: string
-  description: string
-  image: string
-  date: string
-  estimatedReadingTime: number
-  tags: string[]
-}
 const blogEndpoints = queryAPI.injectEndpoints({
   endpoints: build => ({
-    getBlogPosts: build.query<Blog[], void>({
-      query: () => 'test',
+    getBlogPosts: build.query<BlogPost[], void>({
+      async queryFn() {
+        try {
+          const { data } = await httpClient.request<PaginatedResponse<BlogPost>>(`/posts`, {
+            notifyOnError: true,
+            defaultError: 'Failed to fetch posts',
+          })
+          return { data: data.data }
+        }
+        catch (error) {
+          return formatErrorForRTK(error)
+        }
+      },
     }),
   }),
   overrideExisting: false,
