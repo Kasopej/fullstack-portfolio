@@ -2,7 +2,7 @@ import { Exclude } from 'class-transformer';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Project } from '../project/project.entity';
 
-@Entity('user')
+@Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -40,6 +40,15 @@ export class User {
   })
   @Exclude()
   password?: string;
+
+  @Column({
+    length: 96,
+    type: 'varchar',
+    nullable: false,
+    name: 'oauth_id',
+    unique: true,
+  })
+  OAuthId?: string;
 
   @OneToMany(() => Project, (project) => project.author)
   projects: Project[];

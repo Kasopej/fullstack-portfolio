@@ -9,8 +9,9 @@ import {
   ValidateIf,
 } from 'class-validator';
 import type { User } from '../user.entity';
+import { PartialType } from '@nestjs/mapped-types';
 
-class BaseUserDto implements Omit<User, 'id' | 'projects'> {
+class BaseUserDto implements Omit<User, 'id' | 'projects' | 'status'> {
   @MaxLength(96)
   @MinLength(4)
   @IsString()
@@ -46,5 +47,7 @@ export class CreateUserDTO extends BaseUserDto {
 
   @IsOptional()
   @IsString()
-  OAuthId: string;
+  OAuthId?: string;
 }
+
+export class UpdateUserDTO extends PartialType(CreateUserDTO) {}

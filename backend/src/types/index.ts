@@ -5,3 +5,8 @@ export type RemoveIndexSignature<T> = {
       ? never
       : K]: T[K];
 };
+
+export type DTOFromEntity<T extends object> = Omit<
+  T,
+  'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
+>;

@@ -8,6 +8,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './modules/user/user.module';
 import { AnalyticsModule } from './modules/analytics/analytics.module';
 import { ProjectModule } from './modules/project/project.module';
+import { TagModule } from './modules/tag/tag.module';
+import { SkillModule } from './modules/skill/skill.module';
+import { UploadModule } from './modules/upload/upload.module';
+import { PostModule } from './modules/post/post.module';
 
 @Module({
   imports: [
@@ -19,7 +23,8 @@ import { ProjectModule } from './modules/project/project.module';
           .valid('development', 'production', 'test')
           .default('production'),
         SUPABASE_URL: Joi.string().required(),
-        SUPABASE_ANON_KEY: Joi.string().required(),
+        SUPABASE_PUBLIC_KEY: Joi.string().required(),
+        SUPABASE_SECRET_KEY: Joi.string().required(),
         DB_USER: Joi.string().required(),
         DB_PASSWD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
@@ -51,6 +56,10 @@ import { ProjectModule } from './modules/project/project.module';
     UserModule,
     AnalyticsModule,
     ProjectModule,
+    TagModule,
+    SkillModule,
+    UploadModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [AppService],

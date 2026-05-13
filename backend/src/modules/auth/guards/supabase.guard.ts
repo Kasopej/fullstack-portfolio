@@ -1,14 +1,24 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-//import { GqlExecutionContext } from '@nestjs/graphql';
+import { Request } from 'express';
+import { UserService } from 'src/modules/user/user.service';
+import { SupabaseUser } from '../auh.types';
+import { Inject } from '@nestjs/common';
 
 @Injectable()
 export class SupabaseAuthGuard extends AuthGuard('supabase') {
-  getRequest(context: ExecutionContext) {
-    //context.getArgByIndex(0);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return context.getArgByIndex(0);
-    //const ctx = GqlExecutionContext.create(context);
-    //return ctx.getContext().req;
+  constructor(@Inject(UserService) private userService: UserService) {
+    super();
+  }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const canActivate = await super.canActivate(context);
+    if (!canActivate) return false;
+
+    const request = context.switchToHttp().getRequest<Request>();
+    const supabaseUser = request.user as SupabaseUser;
+    if (!supabaseUser.email) return false;
+    const dbUser = await this.userService.findByEmail(supabaseUser.email);
+    request.user = dbUser;
+    return true;
   }
 }

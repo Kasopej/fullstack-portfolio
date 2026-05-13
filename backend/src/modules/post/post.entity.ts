@@ -1,18 +1,21 @@
 import {
   Column,
+  CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Skill } from '../skill/skill.entity';
 import { Exclude } from 'class-transformer';
+import { Tag } from '../tag/tag.entity';
 
-@Entity('projects')
-export class Project {
+@Entity('posts')
+export class Post {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -40,7 +43,7 @@ export class Project {
   html: string;
 
   @Column({
-    length: 256,
+    length: 96,
     type: 'varchar',
     nullable: true,
     name: 'cover_image',
@@ -51,35 +54,41 @@ export class Project {
   @JoinColumn({ name: 'author_id' })
   author: User;
   @Exclude()
-  @ManyToMany(() => Skill, (skill) => skill.projects, {
+  @ManyToMany(() => Tag, (tag) => tag.posts, {
     eager: true,
   })
   @JoinTable({
-    name: 'projects_skills',
+    name: 'posts_skills',
     joinColumn: {
-      name: 'projectId',
+      name: 'postId',
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'skillId',
+      name: 'tagId',
       referencedColumnName: 'id',
     },
   })
-  skills: Skill[];
+  tags: Tag[];
 
   @Column({
-    length: 96,
-    type: 'varchar',
+    type: 'bigint',
     nullable: true,
-    name: 'repo_link',
   })
-  repoUrl?: string;
+  estimatedReadingTime?: bigint;
 
-  @Column({
-    length: 96,
-    type: 'varchar',
-    nullable: true,
-    name: 'project_url',
+  @CreateDateColumn({
+    name: 'created_at',
   })
-  projectUrl?: string;
+  createdAt: Date;
+
+  @UpdateDateColumn({
+    name: 'updated_at',
+  })
+  updatedAt: Date;
+
+  @DeleteDateColumn({
+    name: 'deleted_at',
+    nullable: true,
+  })
+  deletedAt?: Date;
 }
