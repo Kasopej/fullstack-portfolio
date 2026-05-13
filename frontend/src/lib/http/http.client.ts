@@ -63,18 +63,31 @@ class HttpClient {
     const requestUrl = new URL(input instanceof Request ? input.url : input.toString(), base || globalThis.location.origin)
     const headers = new Headers(init?.headers || {})
     const abortController = init?.aborter || new AbortController()
-    const token = globalThis.localStorage?.getItem('accessToken')
+    let token: string = ''
+    if (globalThis.window) {
+      token = globalThis.localStorage?.getItem('accessToken') || ''
+    }
+    else if (process.env.NEXT_RUNTIME) {
+      const cookieStore = await import('next/headers').then(m => m.cookies())
+      token = cookieStore.get('accessToken')?.value || ''
+    }
     if (token) {
       headers.set('authorization', `Bearer ${token}`)
     }
     const data = init?.data
     let finalInit: (RawFetchInit & RequestOptions) | undefined = init
+    finalInit = {
+      ...finalInit,
+      body: data as BodyInit,
+    }
     if (data != null) {
-      if (typeof data === 'object' && !(data instanceof FormData) && !(data instanceof Blob) && !(data instanceof ArrayBuffer)) {
-        if (!headers.has('content-type')) headers.set('content-type', 'application/json')
-        finalInit = {
-          ...init,
-          body: JSON.stringify(data),
+      if (typeof data === 'object') {
+        if (!(data instanceof FormData) && !(data instanceof Blob) && !(data instanceof ArrayBuffer)) {
+          if (!headers.has('content-type')) headers.set('content-type', 'application/json')
+          finalInit = {
+            ...init,
+            body: JSON.stringify(data),
+          }
         }
       }
       else if (typeof data === 'string') {

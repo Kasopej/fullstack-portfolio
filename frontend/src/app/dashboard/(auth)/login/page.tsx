@@ -15,6 +15,12 @@ import { Session } from '@supabase/supabase-js'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+interface AuthenticationResponse extends Omit<Session, 'user'> {
+  firstName: string
+  lastName: string
+  email: string
+}
+
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string(),
@@ -34,7 +40,7 @@ export default function LoginPage() {
   async function handleLogin(data: Payload) {
     try {
       setIsLoading(true)
-      const authData = (await httpClient.request<Session>('/api/auth/login-proxy', {
+      const authData = (await httpClient.request<AuthenticationResponse>('/api/auth/login-proxy', {
         baseUrl: '',
         method: 'POST',
         data,

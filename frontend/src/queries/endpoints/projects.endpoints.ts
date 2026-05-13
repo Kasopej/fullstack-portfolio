@@ -1,16 +1,24 @@
-import { queryAPI } from "../api"
+import { queryAPI } from '../api'
+import { Project } from '@/schemas'
+import { httpClient } from '@/lib/http/http.client'
+import { formatErrorForRTK } from '../api'
+import { PaginatedResponse } from '@/types'
 
-export type Project = {
-    id: string
-    title: string
-    description: string
-    image: string
-    tags: string[]
-}
 const projectsEndpoints = queryAPI.injectEndpoints({
-  endpoints: (build) => ({
+  endpoints: build => ({
     getProjects: build.query<Project[], void>({
-      query: () => 'test',
+      async queryFn() {
+        try {
+          const { data } = await httpClient.request<PaginatedResponse<Project>>(`/projects`, {
+            notifyOnError: true,
+            defaultError: 'Failed to fetch projects',
+          })
+          return { data: data.data }
+        }
+        catch (error) {
+          return formatErrorForRTK(error)
+        }
+      },
     }),
   }),
   overrideExisting: false,

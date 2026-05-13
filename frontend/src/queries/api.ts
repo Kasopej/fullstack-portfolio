@@ -1,10 +1,10 @@
 import { HTTPError } from '@/lib/http/http.client'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-// Define a service using a base URL and expected endpoints
+const baseUrl = process.env.NEXT_PUBLIC_API_URL!
 export const queryAPI = createApi({
   reducerPath: 'queryAPI',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://pokeapi.co/api/v2/' }),
+  baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: build => ({
   }),
 })

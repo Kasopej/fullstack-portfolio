@@ -155,7 +155,13 @@
     h2 {
       @apply text-[2rem] leading-[1.1];
     }
+strong {
+  @apply font-bold;
+}
 button {
   @apply cursor-pointer;
+}
+select {
+  @apply bg-background;
 }
 }

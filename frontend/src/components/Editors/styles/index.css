@@ -1,0 +1,8 @@
+select.ql-ui {
+    background-color: var(--color-contrast-foreground);
+    color: var(--color-contrast);
+}
+
+.ql-tooltip.ql-editing {
+    left: 0 !important;
+}
