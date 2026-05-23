@@ -19,7 +19,7 @@ const SKeletonLoader = () => {
 }
 
 export default function BlogPostsList() {
-  const { data: blogPosts = [] } = useGetBlogPostsQuery()
+  const { data: { data: blogPosts = [] } = {} } = useGetBlogPostsQuery()
   return (
     <div className="flex flex-col gap-6">
       {blogPosts.map(post => (

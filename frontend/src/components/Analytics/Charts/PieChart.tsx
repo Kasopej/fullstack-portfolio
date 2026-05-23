@@ -37,13 +37,13 @@ export default function PieChart({ canvasProps, chartProps, className }: Props) 
   }, [chartProps])
   return (
     <div className={`relative w-full h-full min-h-[300px] ${className || ''}`}>
-      <canvas {...canvasProps} ref={ref} className="absolute inset-0 w-full h-full"></canvas>
+      <canvas {...canvasProps} ref={ref} className="absolute inset-0"></canvas>
     </div>
   )
 }
 
-export function PieChartSkeleton() {
+export function PieChartSkeleton({ className }: { className?: string }) {
   return (
-    <Skeleton className="w-full h-48 rounded-full" />
+    <Skeleton className={`w-full aspect-square rounded-full ${className || ''}`} />
   )
 }

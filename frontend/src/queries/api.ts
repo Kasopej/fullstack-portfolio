@@ -7,6 +7,7 @@ export const queryAPI = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   endpoints: build => ({
   }),
+  tagTypes: ['BlogPost', 'Project'],
 })
 
 export function formatErrorForRTK(error: unknown): {

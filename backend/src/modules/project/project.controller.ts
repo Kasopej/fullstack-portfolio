@@ -1,6 +1,8 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -8,6 +10,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CRUDController } from 'src/types/controllers.types';
 import { ProjectService } from './project.service';
@@ -24,12 +27,14 @@ import { SupabaseAuthGuard } from '../auth/guards/supabase.guard';
 export class ProjectController implements CRUDController {
   constructor(private readonly service: ProjectService) {}
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @UseGuards(SupabaseAuthGuard)
   async create(@Body() body: CreateProjectDTO, @ActiveUser() user: User) {
     return this.service.create(body, user);
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
   @Patch(':id')
   @UseGuards(SupabaseAuthGuard)
   async update(
@@ -47,5 +52,10 @@ export class ProjectController implements CRUDController {
   @Get()
   async getAll(@Query() query: QueryProjectDTO) {
     return this.service.findAll(query);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.service.deleteRecord(id);
   }
 }

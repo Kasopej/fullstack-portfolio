@@ -5,20 +5,23 @@ import z from 'zod'
 export const SkillSchema = z.object({
   name: z.string().nonempty('Skill name is required'),
 })
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const OptionalUrlSchema = z.url().optional().transform(value => value || undefined)
 export type Skill = z.infer<typeof SkillSchema>
 export const ProjectSchema = z.object({
   title: z.string().nonempty('Project title is required'),
   description: z.string().nonempty('Project description is required'),
   html: z.string().nonempty('Project details are required'),
   skills: z.array(SkillSchema),
-  projectUrl: z.url().optional(),
-  repoUrl: z.url().optional(),
-  coverImage: z.url().optional(),
+  projectUrl: z.preprocess(val => !val ? undefined : val, z.url().optional().transform(value => value || undefined)) as unknown as typeof OptionalUrlSchema,
+  repoUrl: z.preprocess(val => !val ? undefined : val, z.url().optional().transform(value => value || undefined)) as unknown as typeof OptionalUrlSchema,
+  coverImage: z.url(),
 })
 export type Project = z.infer<typeof ProjectSchema> & {
-  id: string
+  id: number
   createdAt: DateString
   updatedAt: DateString
+  publish: boolean
 }
 
 export const CreateProjectSchema = ProjectSchema.omit({ skills: true }).extend({
@@ -37,15 +40,16 @@ export const BlogPostSchema = z.object({
   title: z.string().nonempty('Blog post title is required'),
   description: z.string().nonempty('Blog post description is required'),
   html: z.string().nonempty('Blog post details are required'),
-  coverImage: z.url().optional(),
+  coverImage: z.url(),
   tags: z.array(TagSchema),
 })
 export type BlogPost = z.infer<typeof BlogPostSchema> & {
-  id: string
+  id: number
   createdAt: DateString
   updatedAt?: DateString
   estimatedReadingTime?: ms
   author: User
+  publish: boolean
 }
 
 export const CreateBlogPostSchema = BlogPostSchema.omit({ tags: true }).extend({

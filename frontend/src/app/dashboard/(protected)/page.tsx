@@ -141,7 +141,7 @@ export default function Dashboard() {
         </StatsCard>
       </section>
       <section className="w-full grid grid-cols-[2fr_1fr] gap-6 items-start mt-6">
-        <div className="w-full p-6 rounded-xl bg-contrast text-contrast-foreground">
+        <div className="w-full flex flex-col p-6 rounded-xl bg-contrast text-contrast-foreground">
           <span className="w-full gap-2 flex justify-between items-center mb-5">
             <span className="text-base font-semibold">Page Views</span>
             <Tabs
@@ -161,10 +161,10 @@ export default function Dashboard() {
             isLoading ? <BarChartSkeleton /> : <BarChart chartProps={pageViewsHistoricalDataChartConfig} />
           }
         </div>
-        <div className="w-full p-6 rounded-xl bg-contrast text-contrast-foreground">
+        <div className="w-full flex flex-col p-6 rounded-xl bg-contrast text-contrast-foreground">
           <span className="text-base font-semibold">Device Breakdown</span>
           {
-            isLoading ? <PieChartSkeleton /> : <PieChart chartProps={pageViewsPerDeviceTypeDataChartConfig} />
+            isLoading ? <PieChartSkeleton className="self-center" /> : <PieChart chartProps={pageViewsPerDeviceTypeDataChartConfig} />
           }
         </div>
       </section>

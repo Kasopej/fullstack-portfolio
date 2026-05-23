@@ -11,7 +11,7 @@ import 'quill/dist/quill.snow.css'
 import './styles/index.css'
 import { Loader2Icon } from 'lucide-react'
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
-import { deleteFiles, uploadFile } from '@/lib/utils/files/upload'
+import { dataUriToBlob, deleteFiles, uploadFile } from '@/lib/utils/files/upload'
 import { notifyError } from '@/lib/utils/client/errors.utils'
 
 export function deltaToHtml(ops: Delta['ops']) {
@@ -79,8 +79,9 @@ const extractFileSrcListFromDelta = (delta: Delta): string[] => {
 let previousFileSourceList: { src: string, tempId: string }[] = []
 type Props = {
   onProcessEnd?: (content: string) => void
+  presetContent?: string
 }
-export default function HtmlEditor({ onProcessEnd }: Props) {
+export default function HtmlEditor({ onProcessEnd, presetContent }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const quillRef = useRef<Quill | null>(null)
   const [rawDelta, setRawDelta] = useState<Delta | null>(null)
@@ -207,7 +208,6 @@ export default function HtmlEditor({ onProcessEnd }: Props) {
       },
       placeholder: 'Start writing...',
     })
-
     quillRef.current = quill
 
     quill.on('text-change', (delta: Delta, _oldDelta: Delta, source: string) => {
@@ -246,7 +246,8 @@ export default function HtmlEditor({ onProcessEnd }: Props) {
         }
         if (fileSrc.src.startsWith('data:')) {
           const mimeType = fileSrc.src.split(';')[0].split(':')[1] || 'image/png'
-          const file = new File([fileSrc.src], `file-${fileSrc.tempId}.${mimeType.split('/')[1]}`, {
+          const blob = dataUriToBlob(fileSrc.src)
+          const file = new File([blob], `file-${fileSrc.tempId}.${mimeType.split('/')[1]}`, {
             type: mimeType,
           })
           handleFileAdded({ file, tempId: fileSrc.tempId })
@@ -262,7 +263,14 @@ export default function HtmlEditor({ onProcessEnd }: Props) {
     handleFileAdded,
     handleFilesRemoved,
     uploadedFiles,
+    presetContent,
   ])
+
+  useEffect(() => {
+    if (presetContent) {
+      quillRef.current?.setContents(quillRef.current.clipboard.convert({ html: presetContent }))
+    }
+  }, [presetContent])
 
   const processContentForOutput = useCallback((delta: Delta) => {
     const updatedOps: Op[] = []

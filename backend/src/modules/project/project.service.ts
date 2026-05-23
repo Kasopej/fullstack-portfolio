@@ -12,11 +12,13 @@ import {
 } from './dto/project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './project.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { PaginationService } from 'src/providers/pagination/pagination.service';
 import type { PaginatedResponse } from 'src/providers/pagination/pagination.types';
 import { SkillService } from '../skill/skill.service';
 import { User } from '../user/user.entity';
+import { omit } from 'src/lib/utils';
+import { PublishStatus } from 'src/types';
 
 @Injectable()
 export class ProjectService implements CRUDService {
@@ -75,7 +77,8 @@ export class ProjectService implements CRUDService {
       .catch(() => {
         throw new InternalServerErrorException('Could not find project');
       });
-    if (project) return project;
+    if (project)
+      return { ...project, publish: project.publish ?? PublishStatus.TRUE };
     throw new NotFoundException('Could not find project');
   }
 
@@ -83,21 +86,46 @@ export class ProjectService implements CRUDService {
     const project = await this.repository.findOneBy({ title }).catch(() => {
       throw new InternalServerErrorException('Could not find project');
     });
-    if (project) return project;
+    if (project)
+      return { ...project, publish: project.publish ?? PublishStatus.TRUE };
     throw new NotFoundException('Could not find project');
   }
 
   public async findAll(
     query?: QueryProjectDTO,
   ): Promise<PaginatedResponse<Project>> {
+    const dataQuery = query && omit(query, 'limit', 'page');
     return this.paginationService
-      .paginateQuery(this.repository, query, {
-        relations: {
-          author: true,
+      .paginateQuery(
+        this.repository,
+        query,
+        {
+          where: dataQuery
+            ? {
+                title: dataQuery.title
+                  ? ILike(`%${dataQuery.title}%`)
+                  : undefined,
+              }
+            : {},
+          relations: {
+            author: true,
+          },
         },
-      })
+        {
+          map: (project) => ({
+            ...project,
+            publish: project.publish ?? PublishStatus.TRUE,
+          }),
+        },
+      )
       .catch(() => {
         throw new InternalServerErrorException('No projects found');
       });
+  }
+
+  public async deleteRecord(id: number) {
+    await this.repository.delete(id).catch(() => {
+      throw new InternalServerErrorException('Could not find post');
+    });
   }
 }

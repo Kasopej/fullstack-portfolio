@@ -9,7 +9,6 @@ interface UploadResponse {
 export async function uploadFile(file: File, signal?: AbortSignal): Promise<UploadResponse> {
   const formData = new FormData()
   formData.append('file', file)
-  console.log(formData.get('file'), file)
   try {
     const response = await httpClient.request<UploadResponse>('/file/upload', {
       method: 'POST',
@@ -36,4 +35,18 @@ export async function deleteFiles(fileIds: string[], signal?: AbortSignal) {
     notifyError(error)
     throw error
   }
+}
+
+export function dataUriToBlob(dataUri: string): Blob {
+  const [header, base64] = dataUri.split(',')
+  const mime = header.match(/:(.*?);/)?.[1] || 'image/png'
+
+  const binary = atob(base64)
+  const array = new Uint8Array(binary.length)
+
+  for (let i = 0; i < binary.length; i++) {
+    array[i] = binary.charCodeAt(i)
+  }
+
+  return new Blob([array], { type: mime })
 }

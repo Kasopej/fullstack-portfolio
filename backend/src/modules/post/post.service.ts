@@ -7,12 +7,19 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from 'src/providers/pagination/pagination.service';
 import { CRUDService } from 'src/types/services.types';
-import { Repository } from 'typeorm';
+import { Equal, ILike, IsNull, Or, Repository } from 'typeorm';
 import { Post } from './post.entity';
 import { TagService } from '../tag/tag.service';
-import { CreatePostDTO, QueryPostDTO, UpdatePostDTO } from './post.dto';
+import {
+  CreatePostDTO,
+  PublishStatusQuery,
+  QueryPostDTO,
+  UpdatePostDTO,
+} from './post.dto';
 import { User } from '../user/user.entity';
 import { PaginatedResponse } from 'src/providers/pagination/pagination.types';
+import { omit } from 'src/lib/utils';
+import { PublishStatus } from 'src/types';
 
 @Injectable()
 export class PostService implements CRUDService {
@@ -72,7 +79,7 @@ export class PostService implements CRUDService {
       .catch(() => {
         throw new InternalServerErrorException('Could not find post');
       });
-    if (post) return post;
+    if (post) return { ...post, publish: post.publish ?? PublishStatus.TRUE };
     throw new NotFoundException('Could not find post');
   }
 
@@ -80,20 +87,50 @@ export class PostService implements CRUDService {
     const post = await this.repository.findOneBy({ title }).catch(() => {
       throw new InternalServerErrorException('Could not find post');
     });
-    if (post) return post;
+    if (post) return { ...post, publish: post.publish ?? PublishStatus.TRUE };
     throw new NotFoundException('Could not find post');
   }
 
   public async findAll(query?: QueryPostDTO): Promise<PaginatedResponse<Post>> {
+    const dataQuery = query && omit(query, 'limit', 'page');
     return this.paginationService
-      .paginateQuery(this.repository, query, {
-        relations: {
-          author: true,
+      .paginateQuery(
+        this.repository,
+        query,
+        {
+          where: dataQuery
+            ? {
+                title: dataQuery.title
+                  ? ILike(`%${dataQuery.title}%`)
+                  : undefined,
+                publish:
+                  !dataQuery.type || dataQuery.type === PublishStatusQuery.ALL
+                    ? undefined
+                    : dataQuery.type === PublishStatusQuery.DRAFT
+                      ? PublishStatus.FALSE
+                      : Or(Equal(PublishStatus.TRUE), IsNull()),
+              }
+            : {},
+          relations: {
+            author: true,
+          },
         },
-      })
+        {
+          map: (post) => ({
+            ...post,
+            publish: post.publish ?? PublishStatus.TRUE,
+          }),
+        },
+      )
       .catch(() => {
         throw new InternalServerErrorException('No posts found');
       });
+  }
+
+  public async deleteRecord(id: number) {
+    await this.repository.delete(id).catch(() => {
+      throw new InternalServerErrorException('Could not find post');
+    });
   }
 
   private calculateEstimatedReadingTime(html: string): bigint {

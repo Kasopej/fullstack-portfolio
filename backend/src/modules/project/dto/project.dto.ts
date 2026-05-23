@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -12,8 +13,9 @@ import { Project } from '../project.entity';
 import { User } from 'src/modules/user/user.entity';
 import { OmitType, PartialType } from '@nestjs/mapped-types';
 import { PaginationDto } from 'src/providers/pagination/pagination.dto';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { CreateSkillDTO } from 'src/modules/skill/skill.dto';
+import { PublishStatus } from 'src/types';
 
 class BaseProjectDto implements Omit<Project, 'id' | 'skills'> {
   @MaxLength(48)
@@ -49,6 +51,16 @@ class BaseProjectDto implements Omit<Project, 'id' | 'skills'> {
   @IsOptional()
   @IsUrl()
   repoUrl?: string;
+
+  @IsEnum(PublishStatus)
+  @Transform(({ value }) =>
+    typeof value !== 'boolean'
+      ? (value as unknown)
+      : value
+        ? PublishStatus.TRUE
+        : PublishStatus.FALSE,
+  )
+  publish: PublishStatus;
 }
 
 export class CreateProjectDTO extends BaseProjectDto {}

@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -14,9 +15,9 @@ import { PaginationDto } from 'src/providers/pagination/pagination.dto';
 import { Transform, Type } from 'class-transformer';
 import { Post } from './post.entity';
 import { CreateTagDTO } from '../tag/tag.dto';
-import { DTOFromEntity } from 'src/types';
+import { DTOFromEntity, PublishStatus } from 'src/types';
 
-class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags'> {
+class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags' | 'publish'> {
   @MaxLength(48)
   @MinLength(4)
   @IsString()
@@ -43,6 +44,16 @@ class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags'> {
   @Type(() => CreateTagDTO)
   tags: CreateTagDTO[];
 
+  @IsEnum(PublishStatus)
+  @Transform(({ value }) =>
+    typeof value !== 'boolean'
+      ? (value as unknown)
+      : value
+        ? PublishStatus.TRUE
+        : PublishStatus.FALSE,
+  )
+  publish: PublishStatus;
+
   @Transform(({ value }) => (value as bigint).toString())
   estimatedReadingTime?: bigint;
 }
@@ -52,6 +63,11 @@ export class UpdatePostDTO extends PartialType(
   OmitType(BasePostDto, ['author']),
 ) {}
 
+export enum PublishStatusQuery {
+  ALL = 'all',
+  PUBLISHED = 'published',
+  DRAFT = 'draft',
+}
 export class QueryPostDTO
   extends PartialType(PaginationDto)
   implements Partial<BasePostDto>
@@ -60,9 +76,14 @@ export class QueryPostDTO
   @MaxLength(48)
   @MinLength(4)
   @IsString()
+  @Transform(({ value }) => (value as string) || undefined)
   title?: string;
 
   @IsOptional()
   @IsArray()
-  skills?: CreateTagDTO[];
+  tags?: CreateTagDTO[];
+
+  @IsOptional()
+  @IsEnum(PublishStatusQuery)
+  type?: PublishStatusQuery;
 }

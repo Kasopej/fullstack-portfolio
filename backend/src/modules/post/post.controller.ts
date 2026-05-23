@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
@@ -39,15 +40,18 @@ export class PostController implements CRUDController {
     return this.service.update(id, body);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   async getById(@Param('id', ParseIntPipe) id: number) {
     return this.service.findById(id);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getAll(@Query() query: QueryPostDTO) {
     return this.service.findAll(query);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.service.deleteRecord(id);
   }
 }

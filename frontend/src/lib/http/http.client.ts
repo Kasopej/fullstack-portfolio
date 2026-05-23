@@ -1,4 +1,4 @@
-import { duplicateRequestError } from '@/constants'
+import { manualAbortError } from '@/constants'
 import { notifyError } from '../utils/client/errors.utils'
 
 type FetchArgs = Parameters<typeof fetch>
@@ -21,15 +21,21 @@ type ResponseSuccessInterceptor<T = unknown> = (
 
 type ResponseErrorInterceptor = (error: unknown) => Promise<HTTPError> | HTTPError
 
-type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController, notifyOnError?: boolean, defaultError?: string }
+type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController, notifyOnError?: boolean, defaultError?: string }
 
 export class HTTPError {
   constructor(
     public status: number,
     public statusText: string,
-    public body?: unknown,
+    public body?: {
+      message: string
+    },
   ) {
   }
+}
+
+interface APIError {
+  message: string
 }
 
 const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL!
@@ -39,7 +45,6 @@ class HttpClient {
   private static requestInterceptors = new Set<RequestInterceptor>()
   private static responseSuccessInterceptors = new Set<ResponseSuccessInterceptor>()
   private static responseErrorInterceptors = new Set<ResponseErrorInterceptor>()
-  private static tempRequestHashMap = new Map<string, AbortController>() // for deduping (stores hash of request options)
 
   static addRequestInterceptors(...fns: RequestInterceptor[]) {
     fns.forEach(fn => this.requestInterceptors.add(fn))
@@ -105,24 +110,6 @@ class HttpClient {
       signal: abortController.signal,
     }
 
-    if (globalThis.window) {
-      // near instant duplicate requests (e.g react double effect) override previous requests
-      const requestHash = JSON.stringify({
-        url: requestUrl.toString(),
-        method: finalInit?.method || 'GET',
-        headers: finalInit?.headers || {},
-        body: finalInit?.body,
-      })
-
-      if (this.tempRequestHashMap.has(requestHash)) {
-        this.tempRequestHashMap.get(requestHash)?.abort(duplicateRequestError)
-      }
-      this.tempRequestHashMap.set(requestHash, abortController)
-      setTimeout(() => {
-        this.tempRequestHashMap.delete(requestHash)
-      }, 5000)
-    }
-
     for (const interceptor of this.requestInterceptors) {
       await interceptor(requestUrl, finalInit)
     }
@@ -131,7 +118,7 @@ class HttpClient {
       const response = await fetch(requestUrl, finalInit)
 
       if (!response.ok) {
-        const errorBody = await this.parseBody(response)
+        const errorBody = await this.parseBody(response) as APIError
         const error = new HTTPError(response.status, response.statusText, errorBody)
         throw error
       }
@@ -147,12 +134,15 @@ class HttpClient {
       }
     }
     catch (err) {
-      let isOverrideError = false
-      if (err instanceof Error && err.message === duplicateRequestError) {
-        isOverrideError = true
+      let isManualAbortError = false
+      if (err instanceof Error && err.message === manualAbortError) {
+        isManualAbortError = true
       }
-      if (err instanceof HTTPError) throw err
-      let interceptedError = new HTTPError(isOverrideError ? 0 : 500, '', err instanceof Error ? err.message : err)
+      let interceptedError: HTTPError
+      if (err instanceof HTTPError) interceptedError = err
+      else interceptedError = new HTTPError(isManualAbortError ? 0 : 500, '', {
+        message: err instanceof Error ? (isManualAbortError ? err.message : formatNativeError(err)) : String(err),
+      })
       for (const errInterceptor of this.responseErrorInterceptors) {
         interceptedError = await errInterceptor(interceptedError)
       }
@@ -176,6 +166,13 @@ class HttpClient {
 
     return response.arrayBuffer()
   }
+}
+
+function formatNativeError(err: Error) {
+  if ('code' in (err.cause as object)) {
+    return `${err.message} ${(err.cause as { code: string }).code}`
+  }
+  return err.message
 }
 
 const httpClient = HttpClient

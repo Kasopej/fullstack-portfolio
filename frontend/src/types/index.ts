@@ -1,4 +1,4 @@
-export interface PaginatedResponse<T> {
+export interface PaginatedResponse<T = unknown> {
   data: T[]
   meta: {
     itemsPerPage: number
@@ -13,6 +13,11 @@ export interface PaginatedResponse<T> {
     previouspage: string
     nextPage: string
   }
+}
+
+export interface PaginationQuery {
+  page: string
+  limit: string
 }
 
 export type DateString = string

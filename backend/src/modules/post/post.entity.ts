@@ -13,6 +13,7 @@ import {
 import { User } from '../user/user.entity';
 import { Exclude, Transform } from 'class-transformer';
 import { Tag } from '../tag/tag.entity';
+import { PublishStatus } from 'src/types';
 
 @Entity('posts')
 export class Post {
@@ -75,6 +76,14 @@ export class Post {
     nullable: true,
   })
   estimatedReadingTime?: bigint;
+
+  @Column({
+    name: 'publish',
+    type: 'enum',
+    enum: PublishStatus,
+    nullable: true,
+  })
+  publish?: PublishStatus;
 
   @CreateDateColumn({
     name: 'created_at',

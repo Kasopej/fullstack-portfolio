@@ -20,7 +20,7 @@ const ProjectSKeletonLoader = () => {
 }
 
 export default function ProjectList() {
-  const { data: projects = [] } = useGetProjectsQuery()
+  const { data: { data: projects = [] } = {} } = useGetProjectsQuery()
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 items-stretch gap-6">
       {projects.map(project => (

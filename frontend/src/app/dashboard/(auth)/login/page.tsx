@@ -41,13 +41,14 @@ export default function LoginPage() {
         baseUrl: '',
         method: 'POST',
         data,
+        notifyOnError: true,
       })).data
       localStorage.setItem('accessToken', authData.access_token)
       localStorage.setItem('refreshToken', authData.refresh_token)
       router.push('/dashboard')
     }
     catch {
-      toast.error('Login failed')
+      // already handled by notifyOnError
     }
     finally {
       setIsLoading(false)

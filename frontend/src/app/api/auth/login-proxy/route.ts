@@ -26,8 +26,8 @@ export async function POST(request: Request) {
   }
   catch (error) {
     if (error instanceof HTTPError) {
-      return NextResponse.json({ error: error.body }, { status: error.status })
+      return NextResponse.json(error.body ?? { message: 'An error occurred' }, { status: error.status })
     }
-    throw error
+    return NextResponse.json({ message: String(error) }, { status: 500 })
   }
 }

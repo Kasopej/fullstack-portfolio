@@ -17,6 +17,29 @@ export type Value = {
   value: string
   label: string
 }
+
+export const ComboboxWrapper = function ({ children, items, popupId }: { children: React.ReactNode, items: Value[], popupId?: string }) {
+  // auto-select first async result
+  React.useLayoutEffect(() => {
+    const popup = document.getElementById(popupId || '')
+    const listbox = popup?.querySelector('[role="listbox"]') as HTMLElement | null
+    if (listbox) {
+      listbox.focus()
+
+      listbox.dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'ArrowDown',
+          bubbles: true,
+        }),
+      )
+    }
+  }, [items, popupId])
+  return (
+    <React.Fragment>
+      {children}
+    </React.Fragment>
+  )
+}
 const Combobox = ComboboxPrimitive.Root
 
 function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
@@ -132,6 +155,7 @@ function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
         'no-scrollbar max-h-[min(calc(--spacing(72)---spacing(9)),calc(var(--available-height)---spacing(9)))] scroll-py-1 overflow-y-auto overscroll-contain p-1 data-empty:p-0',
         className,
       )}
+      tabIndex={undefined}
       {...props}
     />
   )
@@ -146,7 +170,7 @@ function ComboboxItem({
     <ComboboxPrimitive.Item
       data-slot="combobox-item"
       className={cn(
-        'relative flex w-full cursor-default items-center gap-2 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4',
+        'relative flex w-full cursor-pointer items-center gap-2 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*=\'size-\'])]:size-4',
         className,
       )}
       {...props}

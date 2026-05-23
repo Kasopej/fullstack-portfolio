@@ -10,6 +10,7 @@ import {
 import { User } from '../user/user.entity';
 import { Skill } from '../skill/skill.entity';
 import { Exclude } from 'class-transformer';
+import { PublishStatus } from 'src/types';
 
 @Entity('projects')
 export class Project {
@@ -82,4 +83,12 @@ export class Project {
     name: 'project_url',
   })
   projectUrl?: string;
+
+  @Column({
+    name: 'publish',
+    type: 'enum',
+    enum: PublishStatus,
+    nullable: true,
+  })
+  publish?: PublishStatus;
 }

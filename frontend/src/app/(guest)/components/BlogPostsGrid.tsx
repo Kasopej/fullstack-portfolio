@@ -20,7 +20,7 @@ const SKeletonLoader = () => {
 }
 
 export default function BlogPostsList() {
-  const { data: blogPosts = [] } = useGetBlogPostsQuery()
+  const { data: { data: blogPosts = [] } = {} } = useGetBlogPostsQuery()
   return (
     <div className="grid md:grid-cols-3 gap-4">
       {blogPosts.map(post => (

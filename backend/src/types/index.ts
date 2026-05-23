@@ -10,3 +10,8 @@ export type DTOFromEntity<T extends object> = Omit<
   T,
   'id' | 'createdAt' | 'updatedAt' | 'deletedAt'
 >;
+
+export enum PublishStatus {
+  FALSE,
+  TRUE,
+}

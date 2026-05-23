@@ -37,12 +37,12 @@ export default function Home() {
               View my work
             </Button>
           </Link>
-          <Button variant="outline" asChild>
-            <a data-analytics="" data-cta="" href="https://github.com/Kasopej">
+          <a data-analytics="" data-cta="" href="https://github.com/Kasopej">
+            <Button variant="outline">
               <GithubIcon className="size-4" />
               Github
-            </a>
-          </Button>
+            </Button>
+          </a>
         </div>
       </section>
       <ul className="tech-skills min-w-full p-6 bg-muted text-muted-foreground border-t border-b flex flex-wrap items-center justify-center gap-6 md:gap-12">

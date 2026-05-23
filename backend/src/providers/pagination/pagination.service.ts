@@ -22,6 +22,9 @@ export class PaginationService {
       limit: new PaginationDto().limit,
     },
     queryOptions?: FindManyOptions<T>,
+    otherOptions?: {
+      map?: (item: T) => T;
+    },
   ): Promise<PaginatedResponse<T>> {
     const records = await repository.find(
       Object.assign(queryOptions || {}, {
@@ -34,7 +37,7 @@ export class PaginationService {
     const baseUrl = `${this.request.protocol}://${this.request.headers.host}/`;
     const reqUrl = new URL(this.request.url, baseUrl);
     return {
-      data: records,
+      data: records.map(otherOptions?.map ? otherOptions.map : (item) => item),
       meta: {
         currentPage: Number(page),
         itemsPerPage: Number(limit),
