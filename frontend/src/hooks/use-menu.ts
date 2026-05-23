@@ -18,7 +18,7 @@ export function useMenu() {
         },
         {
           title: 'Live Site',
-          href: '/dashboard/live-site',
+          href: '/',
           icon: LiveSiteMenuIcon,
           activeIcon: undefined,
           shortcut: ['d', 'b'],

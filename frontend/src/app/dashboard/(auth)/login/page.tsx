@@ -13,7 +13,6 @@ import { httpClient } from '@/lib/http/http.client'
 import { useRouter } from 'next/navigation'
 import { Session } from '@supabase/supabase-js'
 import { useState } from 'react'
-import { toast } from 'sonner'
 import { User } from '@/types/auth.types'
 
 type AuthenticationResponse = Omit<Session, 'user'> & User

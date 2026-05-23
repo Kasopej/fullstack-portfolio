@@ -4,8 +4,8 @@ import type { NextRequest } from 'next/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 const supabase: SupabaseClient = new SupabaseClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_PUBLIC_KEY!,
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY!,
 )
 export async function proxy(request: NextRequest) {
   const cookieStore = await cookies()

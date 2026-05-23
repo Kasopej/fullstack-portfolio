@@ -1,10 +1,13 @@
+'use client'
 import AppLogo from '@/assets/logo/app_logo.svg?url'
 import NavLink from '@/components/NavLink'
 import { Button } from '@/components/ui/button'
+import { useAuth } from '@/context-providers/AuthProvider'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Navbar() {
+  const { user } = useAuth()
   return (
     <nav className="w-full bg-navbar text-navbar-foreground flex items-center justify-between py-4 px-12">
       <Link data-analytics="" data-cta="" href="/" className="inline-flex gap-2 items-center">
@@ -23,9 +26,17 @@ export default function Navbar() {
         </li>
       </ul>
       <div className="ml-auto inline-flex gap-4 items-center">
-        <Link data-analytics="" data-cta="" href="/dashboard/login" className="text-muted-foreground">
-          Sign In
-        </Link>
+        {user
+          ? (
+              <Link data-analytics="" data-cta="" href="/dashboard" className="text-muted-foreground">
+                Dashboard
+              </Link>
+            )
+          : (
+              <Link data-analytics="" data-cta="" href="/dashboard/login" className="text-muted-foreground">
+                Sign In
+              </Link>
+            )}
         <Button asChild className="bg-green-800 text-white" size="lg">
           <Link data-analytics="" data-cta="" href="/contact">Contact Me</Link>
         </Button>
