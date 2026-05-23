@@ -1,6 +1,6 @@
 import { httpClient } from '@/lib/http/http.client'
 import { BlogPost } from '@/schemas'
-import BlogPostDetail from '../../components/BlogPostDetail'
+import BlogPostDetail from '@/components/BlogPost/BlogPostDetail'
 
 export default async function GuestProjectDetailPage({ params }: { params: Promise<{ postId: string }> }) {
   const { postId } = await params

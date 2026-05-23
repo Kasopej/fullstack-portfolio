@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/tooltip'
 import { PanelLeftIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
-import { MenuItem } from '@/types/navigation.types'
+import { FlatMenu, MenuItem } from '@/types/navigation.types'
 import Link from 'next/link'
 import clsx from 'clsx'
 import { isMenuActive } from '@/hooks/use-menu'
@@ -286,6 +286,8 @@ function SidebarRail({ className, ...props }: React.ComponentProps<'button'>) {
 
   return (
     <button
+      data-analytics=""
+      data-cta=""
       data-sidebar="rail"
       data-slot="sidebar-rail"
       aria-label="Toggle Sidebar"
@@ -574,18 +576,21 @@ function SidebarMenuLink({
   size = 'default',
   tooltip,
   className,
+  menuItem,
   menu,
   ...props
 }: React.ComponentProps<'a'> & {
   tooltip?: string | React.ComponentProps<typeof TooltipContent>
-} & VariantProps<typeof sidebarMenuButtonVariants> & { menu: MenuItem, className?: string }) {
+} & VariantProps<typeof sidebarMenuButtonVariants> & { menuItem: MenuItem, menu: FlatMenu, className?: string }) {
   const { isMobile, state } = useSidebar()
   const pathname = usePathname()
-  const isActive = isMenuActive(menu, pathname)
+  const isActive = isMenuActive(menuItem, pathname, menu)
 
   const button = (
     <Link
-      href={menu.href!}
+      data-analytics=""
+      data-cta=""
+      href={menuItem.href!}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -593,9 +598,9 @@ function SidebarMenuLink({
       className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
       {...props}
     >
-      {(!isActive && menu.icon) && <menu.icon className={clsx(menu.iconClass || defaultLinkIconClasses)} />}
-      {isActive && (menu.activeIcon ? <menu.activeIcon className={clsx(menu.iconClass || defaultLinkIconClasses)} /> : menu.icon && <menu.icon className={clsx(menu.iconClass || defaultLinkIconClasses)} />)}
-      <span>{menu.title}</span>
+      {(!isActive && menuItem.icon) && <menuItem.icon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} />}
+      {isActive && (menuItem.activeIcon ? <menuItem.activeIcon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} /> : menuItem.icon && <menuItem.icon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} />)}
+      <span>{menuItem.title}</span>
     </Link>
   )
 

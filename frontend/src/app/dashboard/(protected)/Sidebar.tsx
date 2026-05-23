@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { isGroup, useMenu } from '@/hooks/use-menu'
 
 export default function AppSidebar() {
-  const { menu } = useMenu()
+  const { menu = [], flatMenu = [] } = useMenu()
   return (
     <SidebarProvider>
       <Sidebar>
@@ -29,7 +29,7 @@ export default function AppSidebar() {
                         <SidebarGroupContent>
                           {menuItem.items.map(menuChildItem => (
                             <SidebarMenuItem key={menuChildItem.title}>
-                              <SidebarMenuLink menu={menuChildItem}>{menuChildItem.title}</SidebarMenuLink>
+                              <SidebarMenuLink menuItem={menuChildItem} menu={flatMenu}>{menuChildItem.title}</SidebarMenuLink>
                             </SidebarMenuItem>
                           ))}
                         </SidebarGroupContent>
@@ -37,7 +37,7 @@ export default function AppSidebar() {
                     )
                   : (
                       <SidebarMenuItem key={menuItem.title}>
-                        <SidebarMenuLink menu={menuItem}>{menuItem.title}</SidebarMenuLink>
+                        <SidebarMenuLink menuItem={menuItem} menu={flatMenu}>{menuItem.title}</SidebarMenuLink>
                       </SidebarMenuItem>
                     )
               })

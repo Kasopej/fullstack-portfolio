@@ -19,7 +19,7 @@ const SKeletonLoader = () => {
   )
 }
 
-export default function BlogPostsList() {
+export default function BlogPostsGrid() {
   const { data: { data: blogPosts = [] } = {} } = useGetBlogPostsQuery()
   return (
     <div className="grid md:grid-cols-3 gap-4">

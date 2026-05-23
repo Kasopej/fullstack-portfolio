@@ -1,4 +1,4 @@
-import BlogPostsGrid from '../components/BlogPostsGrid'
+import BlogPostsGrid from '../../../components/BlogPost/BlogPostsGrid'
 
 export default function GuestProjectsPage() {
   return (

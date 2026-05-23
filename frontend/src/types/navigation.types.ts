@@ -17,6 +17,8 @@ export type MenuItem = Partial<React.ComponentProps<typeof Link>> & {
   onClick?(): void
 }
 
+export type FlatMenu = MenuItem[]
+
 export interface FooterItem {
   title: string
   items: {

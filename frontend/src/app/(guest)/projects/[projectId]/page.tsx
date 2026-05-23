@@ -1,6 +1,6 @@
 import { httpClient } from '@/lib/http/http.client'
 import { Project } from '@/schemas'
-import ProjectDetail from '../../components/ProjectDetail'
+import ProjectDetail from '@/components/Project/ProjectDetail'
 
 export default async function GuestProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params

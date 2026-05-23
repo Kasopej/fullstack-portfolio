@@ -1,3 +1,4 @@
+import { BreadcrumbProvider } from '@/context-providers/BreadcrumbProvider'
 import Navbar from './Navbar'
 import AppSidebar from './Sidebar'
 
@@ -8,13 +9,15 @@ export default function DashboardLayout({
 }>) {
   return (
     <div className="dashboard-wrapper grid grid-cols-[min-content_1fr]">
-      <AppSidebar />
-      <div className="relative h-dvh overflow-auto flex flex-col">
-        <Navbar />
-        <div className="p-8">
-          {children}
+      <BreadcrumbProvider>
+        <AppSidebar />
+        <div className="relative h-dvh overflow-auto flex flex-col">
+          <Navbar />
+          <div className="p-8">
+            {children}
+          </div>
         </div>
-      </div>
+      </BreadcrumbProvider>
     </div>
   )
 }

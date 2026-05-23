@@ -1,16 +1,19 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { isMenuActive, useMenu } from '@/hooks/use-menu'
-import { HomeIcon, SlashIcon } from 'lucide-react'
+import { HomeIcon } from 'lucide-react'
 import ForwardSlashIcon from '@/assets/icons/forward-slash.svg'
 import { usePathname } from 'next/navigation'
 import React from 'react'
+import { useBreadcrumb } from '@/context-providers/BreadcrumbProvider'
 
 export default function AppBreadcrumb() {
   const { flatMenu } = useMenu()
   const pathname = usePathname()
-  const activeMenu = flatMenu.find(menu => isMenuActive(menu, pathname))
+  const { additonalRoutes } = useBreadcrumb()
+  const completeMenu = [...flatMenu, ...additonalRoutes]
+  const activeMenu = completeMenu.find(menu => isMenuActive(menu, pathname, completeMenu))
   const [_, ...parents] = segmentPath(pathname).reverse()
-  const activeMenuParents = flatMenu.filter(menu => menu.href && parents.includes(menu.href.toString())).reverse()
+  const activeMenuParents = completeMenu.filter(menu => menu.href && menu.href !== '/dashboard' && parents.includes(menu.href.toString()))
   return (
     <Breadcrumb>
       <BreadcrumbList>
@@ -45,7 +48,7 @@ function segmentPath(path: string): string[] {
   const result: string[] = []
 
   for (let i = 0; i < parts.length; i++) {
-    result.push(parts.slice(0, i + 1).join('/'))
+    result.push(`/${parts.slice(0, i + 1).join('/')}`)
   }
 
   return result

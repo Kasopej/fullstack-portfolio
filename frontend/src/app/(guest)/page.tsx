@@ -5,8 +5,8 @@ import { CodeIcon, DatabaseIcon, GithubIcon, MoveRight } from 'lucide-react'
 import ColumnGridIcon from '@/assets/icons/column-grid.svg'
 import DockerIcon from '@/assets/icons/docker.svg'
 import Link from 'next/link'
-import ProjectList from './components/ProjectList'
-import BlogPostsList from './components/BlogPostsList'
+import ProjectList from '@/components/Project/ProjectList'
+import BlogPostsList from '@/components/BlogPost/BlogPostsList'
 
 export default function Home() {
   return (

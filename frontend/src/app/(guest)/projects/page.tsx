@@ -1,4 +1,4 @@
-import ProjectList from '../components/ProjectList'
+import ProjectList from '@/components/Project/ProjectList'
 
 export default function GuestProjectsPage() {
   return (
