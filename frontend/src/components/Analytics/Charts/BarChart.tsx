@@ -43,9 +43,9 @@ export default function BarChart({ canvasProps, chartProps, className }: Props) 
   )
 }
 
-export function BarChartSkeleton() {
+export function BarChartSkeleton({ className }: { className?: string }) {
   return (
-    <div className="relative w-full h-full min-h-[300px] grid grid-cols-4 items-end justify-center gap-4 p-4">
+    <div className={`relative w-full h-full min-h-[300px] grid grid-cols-4 items-end justify-center gap-4 p-4 ${className || ''}`}>
       <Skeleton className="w-full h-48 rounded-md" />
       <Skeleton className="w-full h-32 rounded-md" />
       <Skeleton className="w-full h-40 rounded-md" />

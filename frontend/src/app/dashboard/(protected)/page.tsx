@@ -8,7 +8,6 @@ import BarChart, { type BarChartProps, BarChartSkeleton } from '@/components/Ana
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useImmer } from 'use-immer'
 import { PageViewHistoryFilter, useGetPageViewsHistoricalDataQuery, useGetPageViewsPerDeviceTypeQuery } from '@/queries/endpoints/analytics.endpoints'
-import { parse } from 'date-fns'
 import PieChart, { type PieChartProps, PieChartSkeleton } from '@/components/Analytics/Charts/PieChart'
 
 const formatOptions: Parameters<typeof formatNumber>[1] = {
@@ -18,19 +17,24 @@ const formatOptions: Parameters<typeof formatNumber>[1] = {
 }
 export default function Dashboard() {
   const [webVitalsData, setWebVitalsData] = useState<WebVitals>({})
-  const [filter, setFilter] = useImmer<{
+  const [pageViewHistoryFilter, setPageViewHistoryFilter] = useImmer<{
     range: PageViewHistoryFilter
   }>({
     range: 'weekly',
   })
-  const { data: pageViewsHistoricalData, isLoading: isLoadingPageViewsHistoricalData, isFetching: isFetchingPageViewsHistoricalData } = useGetPageViewsHistoricalDataQuery({
-    range: filter.range,
-  })
-  const { data: pageViewsPerDeviceTypeData, isLoading: isLoadingPageViewsPerDeviceType, isFetching: isFetchingPageViewsPerDeviceType } = useGetPageViewsPerDeviceTypeQuery({
+  const [pageViewPerDeviceTypeFilter, setPageViewPerDeviceTypeFilter] = useImmer<{
+    range: PageViewHistoryFilter
+  }>({
     range: 'monthly',
   })
+  const { data: pageViewsHistoricalData, isLoading: isLoadingPageViewsHistoricalData, isFetching: isFetchingPageViewsHistoricalData } = useGetPageViewsHistoricalDataQuery({
+    range: pageViewHistoryFilter.range,
+  })
+  const { data: pageViewsPerDeviceTypeData, isLoading: isLoadingPageViewsPerDeviceType, isFetching: isFetchingPageViewsPerDeviceType } = useGetPageViewsPerDeviceTypeQuery({
+    range: pageViewPerDeviceTypeFilter.range,
+  })
   const formatLabel = useCallback((date: string) => {
-    switch (filter.range) {
+    switch (pageViewHistoryFilter.range) {
       case 'daily':
         return Intl.DateTimeFormat(undefined, { timeStyle: 'short' }).format(new Date(date))
       case 'weekly':
@@ -40,9 +44,9 @@ export default function Dashboard() {
       default:
         return date
     }
-  }, [filter.range])
+  }, [pageViewHistoryFilter.range])
   const formatTooltip = useCallback((date: string) => {
-    switch (filter.range) {
+    switch (pageViewHistoryFilter.range) {
       case 'daily':
         return new Date(date).toLocaleString()
       case 'weekly':
@@ -52,7 +56,7 @@ export default function Dashboard() {
       default:
         return date
     }
-  }, [filter.range, formatLabel])
+  }, [pageViewHistoryFilter.range, formatLabel])
   const pageViewsHistoricalDataChartConfig = useMemo<BarChartProps>(() => {
     return {
       data: {
@@ -115,12 +119,13 @@ export default function Dashboard() {
       },
     }
   }, [pageViewsPerDeviceTypeData])
-  const isLoading = isLoadingPageViewsHistoricalData || isFetchingPageViewsHistoricalData || isLoadingPageViewsPerDeviceType || isFetchingPageViewsPerDeviceType
+  const historicalDataIsLoading = isLoadingPageViewsHistoricalData || isFetchingPageViewsHistoricalData
+  const pageViewPerDeviceDataIsLoading = isLoadingPageViewsPerDeviceType || isFetchingPageViewsPerDeviceType
   useEffect(() => {
     collectWebVitals((vitals) => {
       setWebVitalsData(vitals)
     })
-  }, [filter.range])
+  }, [pageViewHistoryFilter.range])
   if (Object.entries(webVitalsData).length === 0) {
     return null
   }
@@ -145,8 +150,8 @@ export default function Dashboard() {
           <span className="w-full gap-2 flex justify-between items-center mb-5">
             <span className="text-base font-semibold">Page Views</span>
             <Tabs
-              defaultValue={filter.range}
-              onValueChange={value => setFilter({
+              defaultValue={pageViewHistoryFilter.range}
+              onValueChange={value => setPageViewHistoryFilter({
                 range: value as PageViewHistoryFilter,
               })}
             >
@@ -158,13 +163,27 @@ export default function Dashboard() {
             </Tabs>
           </span>
           {
-            isLoading ? <BarChartSkeleton /> : <BarChart chartProps={pageViewsHistoricalDataChartConfig} />
+            historicalDataIsLoading ? <BarChartSkeleton className="-mt-10" /> : <BarChart chartProps={pageViewsHistoricalDataChartConfig} />
           }
         </div>
-        <div className="w-full flex flex-col p-6 rounded-xl bg-contrast text-contrast-foreground">
-          <span className="text-base font-semibold">Device Breakdown</span>
+        <div className="w-full flex flex-col items-center p-6 rounded-xl bg-contrast text-contrast-foreground">
+          <span className="w-full gap-2 flex flex-col mb-5">
+            <span className="text-base font-semibold">Device Breakdown</span>
+            <Tabs
+              defaultValue={pageViewPerDeviceTypeFilter.range}
+              onValueChange={value => setPageViewPerDeviceTypeFilter({
+                range: value as PageViewHistoryFilter,
+              })}
+            >
+              <TabsList>
+                <TabsTrigger value="daily">Daily</TabsTrigger>
+                <TabsTrigger value="weekly">Weekly</TabsTrigger>
+                <TabsTrigger value="monthly">Monthly</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </span>
           {
-            isLoading ? <PieChartSkeleton className="self-center" /> : <PieChart chartProps={pageViewsPerDeviceTypeDataChartConfig} />
+            pageViewPerDeviceDataIsLoading ? <PieChartSkeleton className="self-center max-w-[300px]" /> : <PieChart chartProps={pageViewsPerDeviceTypeDataChartConfig} />
           }
         </div>
       </section>

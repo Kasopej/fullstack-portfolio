@@ -36,7 +36,7 @@ export default function PieChart({ canvasProps, chartProps, className }: Props) 
     }
   }, [chartProps])
   return (
-    <div className={`relative w-full h-full min-h-[300px] ${className || ''}`}>
+    <div className={`relative w-full h-full min-h-[200px] lg:min-h-[300px] ${className || ''}`}>
       <canvas {...canvasProps} ref={ref} className="absolute inset-0"></canvas>
     </div>
   )
