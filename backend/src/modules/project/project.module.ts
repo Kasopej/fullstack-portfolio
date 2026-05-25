@@ -6,9 +6,15 @@ import { ProjectService } from './project.service';
 import { PaginationService } from 'src/providers/pagination/pagination.service';
 import { SkillModule } from '../skill/skill.module';
 import { AuthModule } from '../auth/auth.module';
+import { PermissionModule } from '../permission/permission.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project]), SkillModule, AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Project]),
+    SkillModule,
+    AuthModule,
+    PermissionModule,
+  ],
   controllers: [ProjectController],
   providers: [ProjectService, PaginationService],
 })

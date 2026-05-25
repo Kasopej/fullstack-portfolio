@@ -2,7 +2,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CRUDService } from 'src/types/services.types';
 import {
@@ -29,8 +28,7 @@ export class ProjectService implements CRUDService {
     private readonly skillService: SkillService,
   ) {}
 
-  public async create(dto: CreateProjectDTO, user?: User): Promise<Project> {
-    if (!user) throw new UnauthorizedException();
+  public async create(dto: CreateProjectDTO, user: User): Promise<Project> {
     const resolvedSkills = await this.skillService.resolveSkills(dto.skills);
     const project = this.repository.create({
       ...dto,
@@ -43,10 +41,15 @@ export class ProjectService implements CRUDService {
     });
   }
 
-  public async update(id: number, dto: UpdateProjectDTO) {
+  public async update(id: number, dto: UpdateProjectDTO, user: User) {
     const project = await this.repository
       .findOneOrFail({
-        where: { id },
+        where: {
+          id,
+          author: {
+            id: user.id,
+          },
+        },
       })
       .catch(() => {
         throw new NotFoundException('Project not found');
@@ -123,8 +126,20 @@ export class ProjectService implements CRUDService {
       });
   }
 
-  public async deleteRecord(id: number) {
-    await this.repository.delete(id).catch(() => {
+  public async deleteRecord(id: number, user: User) {
+    const project = await this.repository
+      .findOneOrFail({
+        where: {
+          id,
+          author: {
+            id: user.id,
+          },
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('Project not found');
+      });
+    await this.repository.delete(project.id).catch(() => {
       throw new InternalServerErrorException('Could not find post');
     });
   }

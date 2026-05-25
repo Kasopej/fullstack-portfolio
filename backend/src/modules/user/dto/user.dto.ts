@@ -8,10 +8,10 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import type { User } from '../user.entity';
+import { type User } from '../user.entity';
 import { PartialType } from '@nestjs/mapped-types';
 
-class BaseUserDto implements Omit<User, 'id' | 'projects' | 'status'> {
+class BaseUserDto implements Omit<User, 'id' | 'projects' | 'status' | 'role'> {
   @MaxLength(96)
   @MinLength(4)
   @IsString()

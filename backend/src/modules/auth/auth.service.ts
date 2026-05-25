@@ -4,7 +4,7 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { PasswordLoginDto, SignUpDTO } from './dto/login.dto';
+import { PasswordLoginDto, SignUpDTO } from './dto/auth.dto';
 import {
   supabaseClient,
   supabaseAdminClient,
@@ -21,7 +21,17 @@ export interface AuthenticationResponse extends Omit<Session, 'user'>, User {
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {
+    //     supabaseAdminClient.auth.admin.createUser({
+    //   email: 'guest@example.com',
+    //   password: 'secure-password-123',
+    //   user_metadata: {
+    //     first_name: 'Guest',
+    //     last_name: 'User',
+    //     role: 'guest',
+    //   },
+    // });
+  }
   public async signUp(dto: SignUpDTO): Promise<AuthenticationResponse> {
     const { data, error } = await supabaseClient.auth.signUp({
       email: dto.email,
@@ -65,26 +75,7 @@ export class AuthService {
   ): Promise<AuthenticationResponse> {
     const { data, error } = await supabaseClient.auth.signInWithPassword(dto);
     if (data.user) {
-      const userMetaData = data.user.user_metadata as {
-        first_name: string;
-        last_name: string;
-      };
-      const dbUser = await this.userService
-        .updatebyOauthId(
-          data.user.id,
-          plainToInstance(CreateUserDTO, {
-            email: data.user.email,
-            firstName: userMetaData.first_name,
-            lastName: userMetaData.last_name,
-            OAuthId: data.user.id,
-          } as CreateUserDTO),
-        )
-        .catch(async (err) => {
-          await supabaseAdminClient.auth.admin.signOut(
-            data.session.access_token,
-          );
-          throw err;
-        });
+      const dbUser = await this.userService.findByOAuthId(data.user.id);
       return {
         ...dbUser,
         ...data.session,

@@ -54,6 +54,7 @@ export class Post {
   @ManyToOne(() => User, { cascade: false, eager: false })
   @JoinColumn({ name: 'author_id' })
   author: User;
+
   @ManyToMany(() => Tag, (tag) => tag.posts, {
     eager: true,
   })

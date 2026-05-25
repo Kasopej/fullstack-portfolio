@@ -12,6 +12,7 @@ import { TagModule } from './modules/tag/tag.module';
 import { SkillModule } from './modules/skill/skill.module';
 import { UploadModule } from './modules/upload/upload.module';
 import { PostModule } from './modules/post/post.module';
+import { PermissionModule } from './modules/permission/permission.module';
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { PostModule } from './modules/post/post.module';
     SkillModule,
     UploadModule,
     PostModule,
+    PermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

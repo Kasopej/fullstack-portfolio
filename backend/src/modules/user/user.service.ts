@@ -57,6 +57,16 @@ export class UserService implements CRUDService {
       });
   }
 
+  async findByOAuthId(OAuthId: string): Promise<User> {
+    try {
+      return await this.repository.findOneOrFail({
+        where: { OAuthId },
+      });
+    } catch {
+      throw new InternalServerErrorException();
+    }
+  }
+
   findById: (id: number) => Promise<unknown>;
   findAll: (query?: any) => Promise<unknown>;
 

@@ -1,6 +1,14 @@
 import { Exclude } from 'class-transformer';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Project } from '../project/project.entity';
+import { Role } from '../permission/permission.entity';
 
 @Entity('users')
 export class User {
@@ -49,6 +57,15 @@ export class User {
     unique: true,
   })
   OAuthId?: string;
+
+  @ManyToOne(() => Role, {
+    eager: true,
+    nullable: true,
+  })
+  @JoinColumn({
+    name: 'roleId',
+  })
+  role: Role;
 
   @OneToMany(() => Project, (project) => project.author)
   projects: Project[];

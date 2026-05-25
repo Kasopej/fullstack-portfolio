@@ -2,7 +2,6 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationService } from 'src/providers/pagination/pagination.service';
@@ -20,6 +19,8 @@ import { User } from '../user/user.entity';
 import { PaginatedResponse } from 'src/providers/pagination/pagination.types';
 import { omit } from 'src/lib/utils';
 import { PublishStatus } from 'src/types';
+import { PermissionService } from '../permission/permission.service';
+import { RoleName } from '../permission/permission.entity';
 
 @Injectable()
 export class PostService implements CRUDService {
@@ -28,10 +29,11 @@ export class PostService implements CRUDService {
     private readonly repository: Repository<Post>,
     private readonly paginationService: PaginationService,
     private readonly skillService: TagService,
+    private readonly permissionService: PermissionService,
   ) {}
 
-  public async create(dto: CreatePostDTO, user?: User) {
-    if (!user) throw new UnauthorizedException();
+  public async create(dto: CreatePostDTO, user: User) {
+    this.permissionService.hasRole(user, RoleName.ADMIN);
     const resolvedTags = await this.skillService.resolveTags(dto.tags);
     const post = this.repository.create({
       ...dto,
@@ -46,10 +48,16 @@ export class PostService implements CRUDService {
     });
   }
 
-  public async update(id: number, dto: UpdatePostDTO) {
+  public async update(id: number, dto: UpdatePostDTO, user: User) {
+    this.permissionService.hasRole(user, RoleName.ADMIN);
     const post = await this.repository
       .findOneOrFail({
-        where: { id },
+        where: {
+          id,
+          author: {
+            id: user.id,
+          },
+        },
       })
       .catch(() => {
         throw new NotFoundException('Post not found');
@@ -127,8 +135,21 @@ export class PostService implements CRUDService {
       });
   }
 
-  public async deleteRecord(id: number) {
-    await this.repository.delete(id).catch(() => {
+  public async deleteRecord(id: number, user: User) {
+    this.permissionService.hasRole(user, RoleName.ADMIN);
+    const post = await this.repository
+      .findOneOrFail({
+        where: {
+          id,
+          author: {
+            id: user.id,
+          },
+        },
+      })
+      .catch(() => {
+        throw new NotFoundException('Post not found');
+      });
+    await this.repository.delete(post.id).catch(() => {
       throw new InternalServerErrorException('Could not find post');
     });
   }

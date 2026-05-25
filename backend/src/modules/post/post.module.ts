@@ -6,9 +6,15 @@ import { TagModule } from '../tag/tag.module';
 import { Post } from './post.entity';
 import { PaginationService } from 'src/providers/pagination/pagination.service';
 import { AuthModule } from '../auth/auth.module';
+import { PermissionModule } from '../permission/permission.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post]), TagModule, AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Post]),
+    TagModule,
+    AuthModule,
+    PermissionModule,
+  ],
   controllers: [PostController],
   providers: [PostService, PaginationService],
 })

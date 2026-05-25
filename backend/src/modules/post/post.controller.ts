@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Query,
+  UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -26,7 +27,8 @@ export class PostController implements CRUDController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   @UseGuards(SupabaseAuthGuard)
-  async create(@Body() body: CreatePostDTO, @ActiveUser() user: User) {
+  async create(@Body() body: CreatePostDTO, @ActiveUser() user?: User) {
+    if (!user) throw new UnauthorizedException();
     return this.service.create(body, user);
   }
 
@@ -36,8 +38,10 @@ export class PostController implements CRUDController {
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdatePostDTO,
+    @ActiveUser() user?: User,
   ) {
-    return this.service.update(id, body);
+    if (!user) throw new UnauthorizedException();
+    return this.service.update(id, body, user);
   }
 
   @Get(':id')
@@ -51,7 +55,11 @@ export class PostController implements CRUDController {
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.service.deleteRecord(id);
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @ActiveUser() user?: User,
+  ) {
+    if (!user) throw new UnauthorizedException();
+    return this.service.deleteRecord(id, user);
   }
 }
