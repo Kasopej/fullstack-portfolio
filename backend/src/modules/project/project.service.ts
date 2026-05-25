@@ -35,8 +35,7 @@ export class ProjectService implements CRUDService {
       skills: resolvedSkills,
       author: user,
     });
-    return this.repository.save(project).catch(async (error) => {
-      console.error(error);
+    return this.repository.save(project).catch(async () => {
       throw new InternalServerErrorException();
     });
   }

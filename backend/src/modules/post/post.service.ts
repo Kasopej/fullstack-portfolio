@@ -42,8 +42,7 @@ export class PostService implements CRUDService {
     });
     const estimatedReadingTime = this.calculateEstimatedReadingTime(dto.html);
     post.estimatedReadingTime = estimatedReadingTime;
-    return this.repository.save(post).catch(async (error) => {
-      console.error(error);
+    return this.repository.save(post).catch(async () => {
       throw new InternalServerErrorException();
     });
   }

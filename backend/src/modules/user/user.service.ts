@@ -40,12 +40,7 @@ export class UserService implements CRUDService {
         where: { OAuthId },
       })
       .catch(() => {
-        const newUser = this.repository.create({ ...dto, OAuthId });
-        return this.repository.save(newUser).catch((error) => {
-          console.log(error);
-          throw new NotFoundException('User not found');
-        });
-        // throw new NotFoundException('User not found');
+        throw new NotFoundException('User not found');
       });
     return this.repository
       .save({
