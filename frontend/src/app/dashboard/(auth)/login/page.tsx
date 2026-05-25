@@ -1,7 +1,7 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { GithubIcon, ChromeIcon } from 'lucide-react'
+import { GithubIcon, ChromeIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -16,6 +16,8 @@ import { User } from '@/types/auth.types'
 
 type AuthenticationResponse = Omit<Session, 'user'> & User
 
+const defaultGuestEmail = process.env.NEXT_PUBLIC_GUEST_EMAIL
+const defaultGuestPassword = process.env.NEXT_PUBLIC_GUEST_PASSWORD
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string(),
@@ -27,12 +29,13 @@ export default function LoginPage() {
   const formContext = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: defaultGuestEmail || '',
+      password: defaultGuestPassword || '',
       persistent: false,
     },
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [passwordMasked, setPasswordMasked] = useState(true)
 
   async function handleLogin(data: Payload) {
     try {
@@ -97,7 +100,17 @@ export default function LoginPage() {
                 <FormItem>
                   <FormLabel className="text-contrast-foreground">Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" {...field} />
+                    <Input
+                      placeholder="Enter your password"
+                      type={passwordMasked ? 'password' : 'text'}
+                      {...field}
+                      suffix={(
+                        <Button type="button" variant="outline" size="icon" onClick={() => setPasswordMasked(!passwordMasked)}>
+                          {passwordMasked ? <EyeIcon /> : <EyeOffIcon />}
+                        </Button>
+                      )}
+                      suffixClickable
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
