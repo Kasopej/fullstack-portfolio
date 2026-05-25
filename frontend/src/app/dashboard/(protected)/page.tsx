@@ -122,10 +122,15 @@ export default function Dashboard() {
   const historicalDataIsLoading = isLoadingPageViewsHistoricalData || isFetchingPageViewsHistoricalData
   const pageViewPerDeviceDataIsLoading = isLoadingPageViewsPerDeviceType || isFetchingPageViewsPerDeviceType
   useEffect(() => {
-    collectWebVitals((vitals) => {
+    const { clsObserver, lcpObserver, paintObserver } = collectWebVitals((vitals) => {
       setWebVitalsData(vitals)
     })
-  }, [pageViewHistoryFilter.range])
+    return () => {
+      clsObserver?.disconnect()
+      lcpObserver?.disconnect()
+      paintObserver?.disconnect()
+    }
+  }, [])
   if (Object.entries(webVitalsData).length === 0) {
     return null
   }

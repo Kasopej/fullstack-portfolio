@@ -11,6 +11,9 @@ export function collectWebVitals(
 ) {
   // --- TTFB (Navigation Timing) ---
   const navEntry = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming
+  let paintObserver: PerformanceObserver | null = null
+  let lcpObserver: PerformanceObserver | null = null
+  let clsObserver: PerformanceObserver | null = null
 
   if (navEntry) {
     webVitals.ttfb = navEntry.responseStart // ms
@@ -18,7 +21,7 @@ export function collectWebVitals(
 
   // --- FCP (Paint Timing) ---
   try {
-    const paintObserver = new PerformanceObserver((entryList) => {
+    paintObserver = new PerformanceObserver((entryList) => {
       for (const entry of entryList.getEntries()) {
         if (entry.name === 'first-contentful-paint') {
           webVitals.fcp = entry.startTime
@@ -29,7 +32,7 @@ export function collectWebVitals(
 
     paintObserver.observe({ type: 'paint', buffered: true })
   }
-  catch (e) {
+  catch {
     // Safari fallback (older versions)
     const paints = performance.getEntriesByType('paint')
     const fcpEntry = paints.find(p => p.name === 'first-contentful-paint')
@@ -40,7 +43,7 @@ export function collectWebVitals(
 
   // --- LCP (Largest Contentful Paint) ---
   try {
-    const lcpObserver = new PerformanceObserver((entryList) => {
+    lcpObserver = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries()
       const lastEntry = entries[entries.length - 1]
 
@@ -55,22 +58,21 @@ export function collectWebVitals(
     // Stop observing after page is hidden (recommended)
     const onVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        lcpObserver.disconnect()
+        lcpObserver?.disconnect()
         callback?.({ ...webVitals })
       }
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
     document.addEventListener('visibilitychange', onVisibilityChange)
   }
-  catch (e) {
+  catch {
     // LCP not supported
   }
 
   // --- CLS ---
   try {
     let clsValue = 0
-
-    const clsObserver = new PerformanceObserver((entryList) => {
+    clsObserver = new PerformanceObserver((entryList) => {
       for (const entry of entryList.getEntries() as (PerformanceEntry & { hadRecentInput: boolean, value: number })[]) {
         // Ignore layout shifts triggered by user input
         if (!entry.hadRecentInput) {
@@ -87,7 +89,7 @@ export function collectWebVitals(
     // Finalize CLS when page is hidden
     const onVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        clsObserver.disconnect()
+        clsObserver?.disconnect()
         callback?.({ ...webVitals })
       }
       document.removeEventListener('visibilitychange', onVisibilityChange)
@@ -95,8 +97,12 @@ export function collectWebVitals(
     document.addEventListener('visibilitychange', onVisibilityChange)
   }
   catch {}
-
   callback?.({ ...webVitals })
+  return {
+    lcpObserver,
+    paintObserver,
+    clsObserver,
+  }
 }
 
 collectWebVitals()
