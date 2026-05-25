@@ -11,6 +11,8 @@ export async function proxy(request: NextRequest) {
   const cookieStore = await cookies()
   const token = cookieStore.get('accessToken')
   const refreshToken = cookieStore.get('refreshToken')
+  const headers = request.headers
+  headers.set('x-nextjs-pathname', request.nextUrl.pathname)
   if (!token?.value) {
     if (request.nextUrl.pathname === '/dashboard/login') return NextResponse.next()
     return NextResponse.redirect(new URL('/dashboard/login', request.url))
@@ -21,11 +23,13 @@ export async function proxy(request: NextRequest) {
     if (request.nextUrl.pathname === '/dashboard/login') {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
-    return NextResponse.next()
+    return NextResponse.next({ headers })
   }
   catch (error) {
+    cookieStore.delete('accessToken')
+    cookieStore.delete('refreshToken')
     console.error('Error setting user session:', error)
-    if (request.nextUrl.pathname === '/dashboard/login') return NextResponse.next()
+    if (request.nextUrl.pathname === '/dashboard/login') return NextResponse.next({ headers })
     return NextResponse.redirect(new URL('/dashboard/login', request.url))
   }
 }

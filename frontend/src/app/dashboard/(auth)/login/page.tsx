@@ -7,7 +7,6 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
-import Link from 'next/link'
 import { Label } from '@/components/ui/label'
 import { httpClient } from '@/lib/http/http.client'
 import { useRouter } from 'next/navigation'
@@ -20,6 +19,7 @@ type AuthenticationResponse = Omit<Session, 'user'> & User
 const LoginSchema = z.object({
   email: z.email(),
   password: z.string(),
+  persistent: z.boolean().default(false),
 })
 type Payload = z.infer<typeof LoginSchema>
 export default function LoginPage() {
@@ -29,6 +29,7 @@ export default function LoginPage() {
     defaultValues: {
       email: '',
       password: '',
+      persistent: false,
     },
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -43,8 +44,7 @@ export default function LoginPage() {
         notifyOnError: true,
       })).data
       localStorage.setItem('accessToken', authData.access_token)
-      localStorage.setItem('refreshToken', authData.refresh_token)
-      router.push('/dashboard')
+      router.refresh()
     }
     catch {
       // already handled by notifyOnError
@@ -108,11 +108,13 @@ export default function LoginPage() {
           <div className="w-full mb-5 flex items-center justify-between gap-2 text-[13px]">
             <span>
               <Label>
-                <Checkbox />
+                <Checkbox
+                  defaultChecked={formContext.getValues('persistent')}
+                  onCheckedChange={value => formContext.setValue('persistent', !!value)}
+                />
                 Remember me
               </Label>
             </span>
-            <Link data-analytics="" data-cta="" href="/dashboard/forgot-password">Forgot password?</Link>
           </div>
           <Button className="w-full max-md:h-16 max-md:text-lg" type="submit" size="xl" disabled={isLoading}>
             {isLoading ? 'Signing in...' : 'Sign in'}

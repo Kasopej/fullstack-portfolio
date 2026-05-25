@@ -1,4 +1,4 @@
-import { manualAbortError } from '@/constants'
+import { manualAbortError, UNAUTHENTICATED_ROUTES } from '@/constants'
 import { notifyError } from '../utils/client/errors.utils'
 
 type FetchArgs = Parameters<typeof fetch>
@@ -22,6 +22,28 @@ type ResponseSuccessInterceptor<T = unknown> = (
 type ResponseErrorInterceptor = (error: unknown) => Promise<HTTPError> | HTTPError
 
 type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController, notifyOnError?: boolean, defaultError?: string }
+
+const isGuestPage = async () => {
+  if (globalThis.window) {
+    return UNAUTHENTICATED_ROUTES.includes(globalThis.window.location.pathname)
+  }
+  else if (process.env.NEXT_RUNTIME) {
+    const headers = await import('next/headers').then(m => m.headers())
+    const pathname = headers.get('x-nextjs-pathname') || ''
+    return UNAUTHENTICATED_ROUTES.includes(pathname)
+  }
+  return false
+}
+
+const redirectToLogin = async () => {
+  if (globalThis.window) {
+    globalThis.window.location.href = '/dashboard/login'
+  }
+  if (process.env.NEXT_RUNTIME) {
+    const redirect = await import('next/navigation').then(m => m.redirect)
+    redirect('/dashboard/login')
+  }
+}
 
 export class HTTPError {
   constructor(
@@ -143,6 +165,14 @@ class HttpClient {
       else interceptedError = new HTTPError(isManualAbortError ? 0 : 500, '', {
         message: err instanceof Error ? (isManualAbortError ? err.message : formatNativeError(err)) : String(err),
       })
+      if (interceptedError.status === 401) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          body: JSON.stringify({
+          }),
+        })
+        if (!await isGuestPage()) redirectToLogin()
+      }
       for (const errInterceptor of this.responseErrorInterceptors) {
         interceptedError = await errInterceptor(interceptedError)
       }

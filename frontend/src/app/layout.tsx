@@ -18,18 +18,22 @@ central hub.`,
 central hub.`,
 }
 
+const getCredentials = async () => {
+  const cookieStore = await cookies()
+  const accessToken = cookieStore.get('accessToken')?.value
+  const refreshToken = cookieStore.get('refreshToken')?.value
+  return accessToken && refreshToken ? { accessToken, refreshToken } : null
+}
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const cookieStore = await cookies()
-  const accessToken = cookieStore.get('accessToken')?.value
-  const refreshToken = cookieStore.get('refreshToken')?.value
+  const credentials = await getCredentials()
   return (
     <html lang="en">
       <body className={`${interFontCss.variable} antialiased`}>
-        <AuthProvider initialCredentials={accessToken && refreshToken ? { accessToken, refreshToken } : null}>
+        <AuthProvider credentials={credentials}>
           <ReduxProvider>
             <Toaster position="top-right" />
             {children}
