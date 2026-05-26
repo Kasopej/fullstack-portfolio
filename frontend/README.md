@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfolio Frontend
 
-## Getting Started
+A modern full-stack portfolio frontend built with **Next.js**, designed to showcase projects, skills, and blog content, powered by a dedicated backend API.
 
-First, run the development server:
+### 🚀 Tech Stack
 
+- Next.js (App Router)
+- TypeScript
+- React
+- Supabase Authentication (via backend API integration)
+- Tailwind CSS
+- Posthog integration for client-side session/visits tracking
+- Chart.js components for displaying usage stats
+- Custom HTTP client based on native fetch, with interceptors, headers configuration, body formatting (no axios dependency)
+- Deployed on Vercel
+
+### 📦 Features
+
+- Modern responsive UI
+- Project and blog showcase
+- Authentication-aware UI (admin/guest roles)
+- File/media rendering via Supabase Storage URLs
+
+### 🔗 Backend Integration
+
+This frontend consumes a separate backend API deployed separately.
+
+### 🧠 Architecture
+
+The frontend is fully decoupled from the database layer:
+
+Frontend (Next.js)
+        ↓
+NestJS API (Render)
+        ↓
+Supabase (Auth + DB + Storage)
+
+### 🛠️ Setup
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 📦 Build
+```bash
+npm run build
+npm run start
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🌍 Deployment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Deployed on Vercel with automatic CI/CD from the main branch.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 📌 Notes
+    - No direct database access from frontend
+    - All business logic handled in backend API
+    - Authentication handled via Supabase-backed session layer
