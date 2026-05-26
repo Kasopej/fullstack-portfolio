@@ -56,7 +56,7 @@ const isProdApp = process.env.ENVIRONMENT === 'production';
                 database: process.env.DB_NAME,
               }),
           autoLoadEntities: true,
-          synchronize: true,
+          synchronize: false,
         };
       },
     }),
