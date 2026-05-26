@@ -1,6 +1,6 @@
 # 🚀 Fullstack Portfolio Monorepo
 
-A production-grade fullstack portfolio application built with a modern, scalable architecture separating frontend, backend, and database concerns.
+A production-grade fullstack portfolio & CMS application built as a monorepo but designed with a modern, scalable architecture separating frontend, backend, and database concerns.
 
 ---
 
