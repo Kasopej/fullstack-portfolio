@@ -52,7 +52,7 @@ export function useMenu() {
       items: [
         {
           title: 'Analytics',
-          href: '/dashboard/analytics',
+          href: '#',
           icon: ChartNoAxesColumnIcon,
           activeIcon: undefined,
           shortcut: ['d', 'd'],
@@ -60,7 +60,7 @@ export function useMenu() {
         },
         {
           title: 'Settings',
-          href: '/dashboard/settings',
+          href: '#',
           icon: SettingsIcon,
           activeIcon: undefined,
           shortcut: ['d', 'b'],
