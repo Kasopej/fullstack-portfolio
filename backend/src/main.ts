@@ -19,7 +19,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',
-      'https://fullstack-portfolio-sable.vercel.app',
+      'https://kasope-fullstack-portfolio.vercel.app',
     ],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
