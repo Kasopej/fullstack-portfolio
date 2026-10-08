@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { User } from '../user/user.entity';
-import { PermissionName, Role, RoleName } from './permission.entity';
+import { PermissionName, RoleName } from './permission.entity';
 
 @Injectable()
 export class PermissionService {
@@ -23,10 +23,10 @@ export class PermissionService {
 
   hasAnyRole(
     user: User,
-    roleNames: Role[],
+    roleNames: RoleName[],
     { failIfRejected }: { failIfRejected?: boolean } = { failIfRejected: true },
   ): boolean {
-    const allowed = roleNames.includes(user.role);
+    const allowed = roleNames.includes(user.role.name);
     if (!allowed && failIfRejected)
       throw new InternalServerErrorException(
         "You don't have permssion to take this action",

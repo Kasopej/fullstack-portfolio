@@ -55,6 +55,7 @@ export class PostController implements CRUDController {
   }
 
   @Delete(':id')
+  @UseGuards(SupabaseAuthGuard)
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @ActiveUser() user?: User,

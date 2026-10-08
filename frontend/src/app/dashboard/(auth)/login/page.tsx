@@ -47,7 +47,7 @@ export default function LoginPage() {
         notifyOnError: true,
       })).data
       localStorage.setItem('accessToken', authData.access_token)
-      router.refresh()
+      router.push('/dashboard')
     }
     catch {
       // already handled by notifyOnError

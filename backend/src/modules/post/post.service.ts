@@ -146,10 +146,10 @@ export class PostService implements CRUDService {
         },
       })
       .catch(() => {
-        throw new NotFoundException('Post not found');
+        throw new NotFoundException("Post not found among user's posts");
       });
     await this.repository.delete(post.id).catch(() => {
-      throw new InternalServerErrorException('Could not find post');
+      throw new InternalServerErrorException('Could not delete post');
     });
   }
 

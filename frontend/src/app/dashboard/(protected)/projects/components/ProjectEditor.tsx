@@ -14,7 +14,7 @@ import { notifyError } from '@/lib/utils/client/errors.utils'
 import { CreateProject, CreateProjectSchema, Project, Skill } from '@/schemas'
 import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxContent, ComboboxItem, ComboboxList, Value } from '@/components/ui/combobox'
 import { useDebounce } from 'use-debounce'
-import { ExternalLinkIcon, GithubIcon, Loader2Icon } from 'lucide-react'
+import { EditIcon, ExternalLinkIcon, GithubIcon, Loader2Icon } from 'lucide-react'
 import { FileUploader } from '@/components/File/FileUploader'
 import { uniqBy } from 'lodash-es'
 import { useRouter } from 'next/navigation'
@@ -145,6 +145,9 @@ export default function ProjectEditor({ mode, project }: Props) {
                   <Input
                     className="p-4 w-full border-none border-b font-bold text-3xl"
                     placeholder="Project Title (e.g Fintrack Saas)"
+                    suffix={
+                      <EditIcon />
+                    }
                     {...field}
                   />
                 </FormControl>

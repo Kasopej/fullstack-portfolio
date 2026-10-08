@@ -23,6 +23,7 @@ export function useMenu() {
           activeIcon: undefined,
           shortcut: ['d', 'b'],
           items: [],
+          external: true,
         },
       ],
     },

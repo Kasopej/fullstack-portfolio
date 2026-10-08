@@ -21,7 +21,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { PanelLeftIcon } from 'lucide-react'
+import { ExternalLinkIcon, PanelLeftIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { FlatMenu, MenuItem } from '@/types/navigation.types'
 import Link from 'next/link'
@@ -591,6 +591,7 @@ function SidebarMenuLink({
       data-analytics=""
       data-cta=""
       href={menuItem.href!}
+      target={menuItem.external ? '_blank' : '_self'}
       data-slot="sidebar-menu-button"
       data-sidebar="menu-button"
       data-size={size}
@@ -600,7 +601,14 @@ function SidebarMenuLink({
     >
       {(!isActive && menuItem.icon) && <menuItem.icon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} />}
       {isActive && (menuItem.activeIcon ? <menuItem.activeIcon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} /> : menuItem.icon && <menuItem.icon className={clsx(menuItem.iconClass || defaultLinkIconClasses)} />)}
-      <span>{menuItem.title}</span>
+      <span className="inline-flex gap-2 items-center">
+        <>
+          {menuItem.title}
+        </>
+        {
+          menuItem.external && <ExternalLinkIcon className="-mt-0.5 -ml-1" />
+        }
+      </span>
     </Link>
   )
 

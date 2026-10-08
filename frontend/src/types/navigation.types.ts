@@ -2,7 +2,7 @@ import Link from 'next/link'
 import type { JSX } from 'react'
 import type React from 'react'
 
-export type MenuItem = Partial<React.ComponentProps<typeof Link>> & {
+export type MenuItem = Partial<Omit<React.ComponentProps<typeof Link>, 'href'>> & {
   title: string
   disabled?: boolean
   shortcut?: [string, string]
@@ -15,7 +15,14 @@ export type MenuItem = Partial<React.ComponentProps<typeof Link>> & {
   subPaths?: string[]
   getParent?(): MenuItem | undefined
   onClick?(): void
-}
+} & (
+  { href: URL | string
+    external?: boolean
+  } | {
+    href?: never
+    external?: never
+  }
+)
 
 export type FlatMenu = MenuItem[]
 

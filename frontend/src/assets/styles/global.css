@@ -168,3 +168,6 @@ select {
   @apply bg-background;
 }
 }
+svg {
+  display: inline-block;
+}
