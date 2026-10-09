@@ -21,7 +21,15 @@ type ResponseSuccessInterceptor<T = unknown> = (
 
 type ResponseErrorInterceptor = (error: unknown) => Promise<HTTPError> | HTTPError
 
-type RequestOptions = { baseUrl?: string, method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', data?: unknown, params?: Record<string, string>, aborter?: AbortController, notifyOnError?: boolean, defaultError?: string }
+type RequestOptions = { baseUrl?: string
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
+  data?: unknown
+  params?: Record<string, string>
+  aborter?: AbortController
+  notifyOnError?: boolean
+  defaultError?: string
+  ignore401?: boolean
+}
 
 const isGuestPage = async () => {
   if (globalThis.window) {
@@ -86,8 +94,8 @@ class HttpClient {
     input: RawFetchInput,
     init?: Omit<RawFetchInit, 'body' | 'method'> & RequestOptions,
   ): HttpClientResponse<T> {
-    const base = init?.baseUrl ?? this.baseUrl
-    const requestUrl = new URL(input instanceof Request ? input.url : input.toString(), base || globalThis.location.origin)
+    const baseUrl = init?.baseUrl ?? this.baseUrl
+    const requestUrl = new URL(input instanceof Request ? input.url : input.toString(), baseUrl || globalThis.location.origin)
     const headers = new Headers(init?.headers || {})
     const abortController = init?.aborter || new AbortController()
     let token: string = ''
@@ -156,6 +164,12 @@ class HttpClient {
       }
     }
     catch (err) {
+      let origin = ''
+      if (globalThis.window) origin = location.origin
+      else {
+        const reqUrl = (await import('next/headers').then(m => m.headers())).get('x-request-url')
+        if (reqUrl) origin = new URL(reqUrl).origin
+      }
       let isManualAbortError = false
       if (err instanceof Error && err.message === manualAbortError) {
         isManualAbortError = true
@@ -165,13 +179,13 @@ class HttpClient {
       else interceptedError = new HTTPError(isManualAbortError ? 0 : 500, '', {
         message: err instanceof Error ? (isManualAbortError ? err.message : formatNativeError(err)) : String(err),
       })
-      if (interceptedError.status === 401) {
-        await fetch('/api/auth/logout', {
+      if (interceptedError.status === 401 && !finalInit.ignore401) {
+        await fetch(new URL('/api/auth/logout', origin), {
           method: 'POST',
           body: JSON.stringify({
           }),
         })
-        if (!await isGuestPage()) redirectToLogin()
+        if (!await isGuestPage() && globalThis.window) redirectToLogin()
       }
       for (const errInterceptor of this.responseErrorInterceptors) {
         interceptedError = await errInterceptor(interceptedError)

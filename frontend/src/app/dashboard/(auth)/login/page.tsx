@@ -45,6 +45,7 @@ export default function LoginPage() {
         method: 'POST',
         data,
         notifyOnError: true,
+        ignore401: true,
       })).data
       localStorage.setItem('accessToken', authData.access_token)
       router.push('/dashboard')

@@ -15,6 +15,7 @@ export async function POST(request: Request) {
       {
         method: 'POST',
         data: body,
+        ignore401: true,
       },
     )).data
     const response = NextResponse.json(loginResponse)

@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server'
 import { SupabaseClient } from '@supabase/supabase-js'
 
 const publicRoutes = new Set([
+  '/',
   '/dashboard/login',
   '/dashboard/reset-password',
 ])
@@ -21,7 +22,18 @@ export async function proxy(request: NextRequest) {
   const refreshToken = cookieStore.get('refreshToken')?.value || ''
   const headers = new Headers()
   const pathname = request.nextUrl.pathname
+  const isPage
+    = (pathname.startsWith('/_next')
+      || pathname.startsWith('/api')
+      || pathname.startsWith('/static')
+      || pathname.startsWith('/fonts')
+      || pathname.startsWith('/images')
+      || pathname === '/favicon.ico'
+      || pathname === '/manifest.json'
+      || /\.[^/]+$/.test(pathname)) === false
   headers.set('x-nextjs-pathname', pathname)
+  headers.set('x-request-url', request.nextUrl.href)
+  if (!isPage) return NextResponse.next({ headers })
   if (localOnlyRoutes.has(pathname) && !isLocalOrigin(new URL(pathname))) {
     return NextResponse.error()
   }
@@ -50,5 +62,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: '/dashboard/:path*',
+  matcher: '/:path*',
 }
