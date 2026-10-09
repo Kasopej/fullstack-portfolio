@@ -214,7 +214,6 @@ export default function ProjectEditor({ mode, project }: Props) {
                         multiple
                         value={field.value}
                         onValueChange={(values) => {
-                          console.log({ values })
                           field.onChange(values)
                         }}
                         onInputValueChange={setSkillsSearch}

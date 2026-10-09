@@ -55,7 +55,6 @@ export async function proxy(request: NextRequest) {
   catch (error) {
     cookieStore.delete('accessToken')
     cookieStore.delete('refreshToken')
-    console.error('Error setting user session:', error)
     if (pathname === '/dashboard/login') return NextResponse.next({ headers })
     return NextResponse.redirect(new URL('/dashboard/login', request.url), { headers })
   }

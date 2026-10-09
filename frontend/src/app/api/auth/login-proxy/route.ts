@@ -32,7 +32,6 @@ export async function POST(request: Request) {
     return response
   }
   catch (error) {
-    console.log('login error', error)
     if (error instanceof HTTPError) {
       return NextResponse.json(error.body ?? { message: 'An error occurred' }, { status: error.status })
     }

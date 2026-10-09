@@ -201,7 +201,6 @@ export default function BlogPostEditor({ mode, post }: Props) {
                         autoHighlight
                         value={field.value}
                         onValueChange={(values) => {
-                          console.log({ values })
                           field.onChange(values)
                         }}
                         onInputValueChange={setTagsSearch}
