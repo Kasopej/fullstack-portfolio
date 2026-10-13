@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { useImmer } from 'use-immer'
 import Quill from 'quill'
+import { IframeBlot } from './utils'
 import type { Delta, Op } from 'quill/core'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
@@ -13,6 +14,18 @@ import { Loader2Icon } from 'lucide-react'
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
 import { dataUriToBlob, deleteFiles, uploadFile } from '@/lib/utils/files/upload'
 import { notifyError } from '@/lib/utils/client/errors.utils'
+import type Toolbar from 'quill/modules/toolbar'
+
+Quill.register(IframeBlot)
+const icons = Quill.import('ui/icons') as Record<string, string>
+
+icons.iframe = `
+  <svg viewBox="0 0 18 18">
+    <rect x="2" y="3" width="14" height="12" rx="1" fill="none" stroke="currentColor"/>
+    <path d="M7 7L5 9L7 11M11 7L13 9L11 11"
+      fill="none" stroke="currentColor"/>
+  </svg>
+`
 
 export function deltaToHtml(ops: Delta['ops']) {
   const converter = new QuillDeltaToHtmlConverter(ops, {
@@ -34,22 +47,37 @@ interface UploadedFile {
   file: File
 }
 
-const TOOLBAR_OPTIONS = [
-  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-  [{ font: [] }],
-  [{ size: ['small', false, 'large', 'huge'] }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ color: ['#000000', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'] }, { background: [] }],
-  [{ script: 'sub' }, { script: 'super' }],
-  [{ header: 1 }, { header: 2 }],
-  ['blockquote', 'code-block'],
-  [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
-  [{ indent: '-1' }, { indent: '+1' }],
-  [{ direction: 'rtl' }],
-  [{ align: [] }],
-  ['link', 'image', 'formula'],
-  ['clean'],
-]
+const TOOLBAR_OPTIONS = {
+  container: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ font: [] }],
+    [{ size: ['small', false, 'large', 'huge'] }],
+    ['bold', 'italic', 'underline', 'strike'],
+    [{ color: ['#000000', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899'] }, { background: [] }],
+    [{ script: 'sub' }, { script: 'super' }],
+    [{ header: 1 }, { header: 2 }],
+    ['blockquote', 'code-block'],
+    [{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+    [{ indent: '-1' }, { indent: '+1' }],
+    [{ direction: 'rtl' }],
+    [{ align: [] }],
+    ['link', 'image', 'formula', 'iframe'],
+    ['clean'],
+  ],
+  handlers: {
+    iframe(this: Toolbar) {
+      const range = this.quill.getSelection(true)
+      const [line] = this.quill.getLine(range.index)
+      if (!line) return
+      const value = this.quill.getText(range.index, range.length).replace(/\n/, '')
+      this.quill.insertText(range.index + range.length, '\n')
+      this.quill.insertEmbed(range.index + range.length + 1, 'iframe', {
+        src: value,
+      })
+      line.remove()
+    },
+  },
+}
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
