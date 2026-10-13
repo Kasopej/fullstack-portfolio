@@ -7,6 +7,29 @@ export function deltaToHtml(ops: Delta['ops']) {
     encodeHtml: true,
   })
 
+  converter.renderCustomWith((op) => {
+    if (op.insert.type !== 'iframe') return ''
+
+    const value = op.insert.value
+    if (!value || typeof value.src !== 'string') return ''
+
+    // DOM serialization escapes attribute values in custom embed markup.
+    const iframe = document.createElement('iframe')
+    iframe.className = IframeBlot.className
+    iframe.setAttribute('src', value.src)
+    for (const dimension of ['width', 'height'] as const) {
+      const size = op.attributes[dimension] ?? value[dimension]
+      if (typeof size === 'string' || typeof size === 'number') {
+        iframe.setAttribute(dimension, String(size))
+        iframe.style[dimension] = typeof size === 'number' || /^\d+(\.\d+)?$/.test(size)
+          ? `${size}px`
+          : size
+      }
+    }
+
+    return iframe.outerHTML
+  })
+
   return converter.convert()
 }
 
