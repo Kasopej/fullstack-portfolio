@@ -22,6 +22,9 @@ export const columns: ColumnDef<BlogPost>[] = [
   {
     accessorKey: 'title',
     header: 'TITLE',
+    cell: ({ row }) => {
+      return <Link className="underline hover:text-primary hover:font-semibold" href={`/blog-posts/${row.original.id}`}>{row.original.title}</Link>
+    },
   },
   {
     accessorKey: 'tags',
@@ -52,10 +55,10 @@ export const columns: ColumnDef<BlogPost>[] = [
     },
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'updatedAt',
     header: 'DATE',
     cell: ({ row }) => {
-      const dateString = row.getValue('createdAt') as DateString
+      const dateString = row.original.updatedAt as DateString
       const date = isValid(new Date(dateString)) ? new Date(dateString) : new Date()
       return (
         <div className="capitalize">

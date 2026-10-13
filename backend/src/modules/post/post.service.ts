@@ -121,6 +121,9 @@ export class PostService implements CRUDService {
           relations: {
             author: true,
           },
+          order: {
+            updatedAt: 'DESC',
+          },
         },
         {
           map: (post) => ({

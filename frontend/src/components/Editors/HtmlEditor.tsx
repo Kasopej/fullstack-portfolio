@@ -4,14 +4,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 import { useImmer } from 'use-immer'
 import Quill from 'quill'
-import { IframeBlot } from './utils'
+import { attachIframeBlotResizeHandlers, deltaToHtml, extractFileSrcListFromDelta, IframeBlot } from './utils'
 import type { Delta, Op } from 'quill/core'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github-dark.min.css'
 import 'quill/dist/quill.snow.css'
-import './styles/index.css'
+import '@/assets/styles/quill/index.css'
+import '@/assets/styles/quill/quill-styles.css'
 import { Loader2Icon } from 'lucide-react'
-import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html'
 import { dataUriToBlob, deleteFiles, uploadFile } from '@/lib/utils/files/upload'
 import { notifyError } from '@/lib/utils/client/errors.utils'
 import type Toolbar from 'quill/modules/toolbar'
@@ -26,14 +26,6 @@ icons.iframe = `
       fill="none" stroke="currentColor"/>
   </svg>
 `
-
-export function deltaToHtml(ops: Delta['ops']) {
-  const converter = new QuillDeltaToHtmlConverter(ops, {
-    encodeHtml: true,
-  })
-
-  return converter.convert()
-}
 
 interface PendingFile {
   tempId: string
@@ -81,27 +73,6 @@ const TOOLBAR_OPTIONS = {
 
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`
-}
-
-const extractFileSrcListFromDelta = (delta: Delta): string[] => {
-  const urls: string[] = []
-  if (delta && delta.ops) {
-    delta.ops.forEach((op: Op) => {
-      if (
-        op.insert
-        && typeof op.insert === 'object'
-        && 'image' in op.insert
-        && op.insert.image
-      ) {
-        const fileSrc = op.insert.image
-        if (typeof fileSrc === 'string' && fileSrc.startsWith('data')) {
-          urls.push(fileSrc)
-        }
-      }
-    })
-  }
-
-  return urls
 }
 
 let previousFileSourceList: { src: string, tempId: string }[] = []
@@ -237,6 +208,9 @@ export default function HtmlEditor({ onProcessEnd, presetContent }: Props) {
       placeholder: 'Start writing...',
     })
     quillRef.current = quill
+    const detachIframeResizeHandlers = attachIframeBlotResizeHandlers(quill.root, () => {
+      setRawDelta(quill.getContents())
+    })
 
     quill.on('text-change', (delta: Delta, _oldDelta: Delta, source: string) => {
       if (source !== 'user') return
@@ -286,6 +260,7 @@ export default function HtmlEditor({ onProcessEnd, presetContent }: Props) {
     })
     return () => {
       quillRef.current?.off('text-change')
+      detachIframeResizeHandlers()
     }
   }, [
     handleFileAdded,

@@ -1,0 +1,24 @@
+.ql-editor .ql-iframe-blot {
+  display: block;
+  width: 100%;
+}
+
+.ql-editor.ql-iframe-resize-hover,
+.ql-editor .ql-iframe-blot--resize-ready {
+  cursor: nwse-resize;
+}
+
+.ql-editor .ql-iframe-blot--resize-ready,
+.ql-editor .ql-iframe-blot--resizing {
+  outline: 1px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.ql-editor .ql-iframe-blot--resize-ready {
+  pointer-events: none;
+}
+
+.ql-editor .ql-iframe-blot--resizing {
+  pointer-events: none;
+  user-select: none;
+}

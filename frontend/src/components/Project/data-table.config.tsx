@@ -51,10 +51,10 @@ export const columns: ColumnDef<Project>[] = [
     },
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'updatedAt',
     header: 'DATE',
     cell: ({ row }) => {
-      const dateString = row.getValue('createdAt') as DateString
+      const dateString = row.original.updatedAt as DateString
       const date = isValid(new Date(dateString)) ? new Date(dateString) : new Date()
       return (
         <div className="capitalize">

@@ -2,6 +2,11 @@
 import { useEffect, useRef } from 'react'
 import Quill from 'quill'
 import hljs from 'highlight.js'
+import { IframeBlot } from '../Editors/utils'
+import '@/assets/styles/quill/index.css'
+import '@/assets/styles/quill/quill-styles.css'
+
+Quill.register(IframeBlot)
 
 type Props = {
   value: string

@@ -28,7 +28,7 @@ export default function BlogPostsGrid() {
           <Card className="border-none ring-0">
             <CardHeader>
               <p className="inline-flex items-center gap-2">
-                {format(new Date(post.createdAt), 'MMMM d, yyyy')}
+                {format(new Date(post.updatedAt || post.createdAt), 'MMMM d, yyyy')}
                 <DotIcon className="size-4" />
                 {post.estimatedReadingTime
                   ? `${millisecondsToMinutes(post.estimatedReadingTime)} min`

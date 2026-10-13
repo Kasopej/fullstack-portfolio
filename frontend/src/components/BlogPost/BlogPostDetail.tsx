@@ -31,7 +31,7 @@ export default function BlogPostDetail({ className, data }: Props) {
                           </li>
                         ))}
                       </ul>
-                      <span>{format(post.createdAt, 'MMMM d, yyyy')}</span>
+                      <span>{format(post.updatedAt || post.createdAt, 'MMMM d, yyyy')}</span>
                       <DotIcon />
                       <span>{post.estimatedReadingTime ? `${millisecondsToMinutes(post.estimatedReadingTime)} min` : ''}</span>
                     </div>
