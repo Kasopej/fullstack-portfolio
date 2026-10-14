@@ -18,12 +18,12 @@ import { CreateTagDTO } from '../tag/tag.dto';
 import { DTOFromEntity, PublishStatus } from 'src/types';
 
 class BasePostDto implements Omit<DTOFromEntity<Post>, 'tags' | 'publish'> {
-  @MaxLength(48)
+  @MaxLength(256)
   @MinLength(4)
   @IsString()
   title: string = '';
 
-  @MaxLength(96)
+  @MaxLength(256)
   @MinLength(4)
   @IsString()
   description: string = '';

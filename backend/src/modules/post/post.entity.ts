@@ -21,7 +21,7 @@ export class Post {
   id: number;
 
   @Column({
-    length: 48,
+    length: 256,
     type: 'varchar',
     nullable: false,
     name: 'title',
@@ -29,7 +29,7 @@ export class Post {
   title: string;
 
   @Column({
-    length: 96,
+    length: 256,
     type: 'varchar',
     nullable: false,
     name: 'description',
