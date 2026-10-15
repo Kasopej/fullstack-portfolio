@@ -37,7 +37,7 @@ export async function proxy(request: NextRequest) {
   if (localOnlyRoutes.has(pathname) && !isLocalOrigin(new URL(pathname))) {
     return NextResponse.error()
   }
-  if (publicRoutes.has(pathname)) {
+  if (publicRoutes.has(pathname) || !pathname.startsWith('/dashboard')) {
     return NextResponse.next({
       headers,
     })
