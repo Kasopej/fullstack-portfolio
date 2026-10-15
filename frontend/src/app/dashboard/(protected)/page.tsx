@@ -150,7 +150,7 @@ export default function Dashboard() {
           <p className="text-[28px] font-bold">{webVitals.cls ? `${formatNumber(webVitals.cls, formatOptions)}` : 'N/A'}</p>
         </StatsCard>
       </section>
-      <section className="w-full grid grid-cols-[2fr_1fr] gap-6 items-start mt-6">
+      <section className="w-full grid md:grid-cols-[2fr_1fr] gap-6 items-start mt-6">
         <div className="w-full flex flex-col p-6 rounded-xl bg-contrast text-contrast-foreground">
           <span className="w-full gap-2 flex justify-between items-center mb-5">
             <span className="text-base font-semibold">Page Views</span>

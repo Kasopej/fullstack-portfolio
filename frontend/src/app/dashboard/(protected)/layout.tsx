@@ -9,11 +9,11 @@ export default function DashboardLayout({
   children: React.ReactNode
 }>) {
   return (
-    <div className="dashboard-wrapper grid grid-cols-[min-content_1fr]">
+    <div className="dashboard-wrapper">
       <BreadcrumbProvider>
-        <SidebarProvider>
+        <SidebarProvider className="grid grid-cols-[min-content_1fr]">
           <AppSidebar />
-          <div className="relative h-dvh overflow-auto flex flex-col">
+          <div className="relative h-dvh max-w-full overflow-auto flex flex-col">
             <Navbar />
             <div className="p-8">
               {children}

@@ -9,12 +9,14 @@ import { useAuth } from '@/context-providers/AuthProvider'
 import { getInitials } from '@/lib/utils/format'
 import { Button } from '@/components/ui/button'
 import { LogOutIcon } from 'lucide-react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 export default function AppSidebar() {
   const { menu = [], flatMenu = [] } = useMenu()
   const { user, logout } = useAuth()
+  const isMobile = useIsMobile()
   return (
-    <Sidebar>
+    <Sidebar variant={isMobile ? 'floating' : 'sidebar'}>
       <SidebarHeader>
         <Link data-analytics={null} data-cta={null} href="/" className="inline-flex gap-2 items-center">
           <Image src={AppLogo} alt="App logo" className="size-8" />
