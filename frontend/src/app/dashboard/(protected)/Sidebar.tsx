@@ -1,5 +1,5 @@
 'use client'
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuLink } from '@/components/ui/sidebar'
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuLink, SidebarTrigger } from '@/components/ui/sidebar'
 import Image from 'next/image'
 import AppLogo from '@/assets/logo/app_logo.svg?url'
 import Link from 'next/link'
@@ -17,11 +17,12 @@ export default function AppSidebar() {
   const isMobile = useIsMobile()
   return (
     <Sidebar variant={isMobile ? 'floating' : 'sidebar'}>
-      <SidebarHeader>
+      <SidebarHeader className="flex-row items-center justify-between">
         <Link data-analytics={null} data-cta={null} href="/" className="inline-flex gap-2 items-center">
           <Image src={AppLogo} alt="App logo" className="size-8" />
           <span className="font-bold text-xl">PortfoliOS</span>
         </Link>
+        <SidebarTrigger className="md:hidden" aria-label="Close sidebar" />
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>

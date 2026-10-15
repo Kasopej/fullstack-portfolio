@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <div className="dashboard-wrapper">
       <BreadcrumbProvider>
-        <SidebarProvider className="grid grid-cols-[min-content_1fr]">
+        <SidebarProvider className="grid grid-cols-1 md:grid-cols-[min-content_1fr]">
           <AppSidebar />
           <div className="relative h-dvh max-w-full overflow-auto flex flex-col">
             <Navbar />
