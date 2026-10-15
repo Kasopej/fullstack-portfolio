@@ -14,7 +14,9 @@ import { UploadModule } from './modules/upload/upload.module';
 import { PostModule } from './modules/post/post.module';
 import { PermissionModule } from './modules/permission/permission.module';
 
-const isProdApp = process.env.ENVIRONMENT === 'production';
+const isLiveApp =
+  process.env.ENVIRONMENT === 'production' &&
+  process.env.IS_LOCAL_MACHINE !== 'true';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,10 +29,10 @@ const isProdApp = process.env.ENVIRONMENT === 'production';
         SUPABASE_URL: Joi.string().required(),
         SUPABASE_PUBLIC_KEY: Joi.string().required(),
         SUPABASE_SECRET_KEY: Joi.string().required(),
-        DB_USER: isProdApp ? Joi.string() : Joi.string().required(),
-        DB_PASSWD: isProdApp ? Joi.string() : Joi.string().required(),
-        DB_NAME: isProdApp ? Joi.string() : Joi.string().required(),
-        DB_URL: !isProdApp ? Joi.string() : Joi.string().required(),
+        DB_USER: isLiveApp ? Joi.string() : Joi.string().required(),
+        DB_PASSWD: isLiveApp ? Joi.string() : Joi.string().required(),
+        DB_NAME: isLiveApp ? Joi.string() : Joi.string().required(),
+        DB_URL: !isLiveApp ? Joi.string() : Joi.string().required(),
         POSTHOG_API_KEY: Joi.string().required(),
       }),
       validationOptions: {
@@ -44,7 +46,7 @@ const isProdApp = process.env.ENVIRONMENT === 'production';
       useFactory() {
         return {
           type: 'postgres',
-          ...(isProdApp
+          ...(isLiveApp
             ? {
                 url: process.env.DB_URL,
               }
