@@ -19,11 +19,11 @@ export default function AuthLayout({
       <section className="auth-sidebar-banner">
         <Link href="/" className="absolute! top-6 left-6 inline-flex gap-2 items-center">
           <Image src={AppLogo} alt="App logo" className="size-8" />
-          <span className="font-bold text-xl">PortfoliOS</span>
+          <span className="font-bold text-xl">WorkCMS</span>
         </Link>
         <p className="max-w-120">
           <q className="block text-2xl font-medium mb-6">
-            Manage your entire digital
+            Manage your entire technical
             presence from one central hub.
           </q>
           <span className="text-sm font-light">

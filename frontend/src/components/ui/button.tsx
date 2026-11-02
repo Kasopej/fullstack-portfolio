@@ -63,13 +63,20 @@ function Button({
     loading?: boolean
   }) {
   const Comp = asChild ? Slot : 'button'
-  const Wrapper = asChild ? 'span' : React.Fragment
-  const wrapperProps = asChild
-    ? {
-        className: 'inline-flex items-center gap-2',
-      }
-    : {}
 
+  if (!asChild) return (
+    <button
+      data-slot="button"
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+      disabled={loading || props.disabled}
+    >
+      {loading && <Loader2Icon className="animate-spin" />}
+      {props.children}
+    </button>
+  )
   return (
     <Comp
       data-slot="button"
@@ -79,10 +86,7 @@ function Button({
       {...props}
       disabled={loading || props.disabled}
     >
-      <Wrapper {...wrapperProps}>
-        {loading && <Loader2Icon className="animate-spin" />}
-        {props.children}
-      </Wrapper>
+      {props.children}
     </Comp>
   )
 }

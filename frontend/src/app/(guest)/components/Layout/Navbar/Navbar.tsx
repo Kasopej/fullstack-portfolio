@@ -22,7 +22,7 @@ export default function Navbar() {
     <nav className="w-full bg-navbar text-navbar-foreground flex flex-wrap items-center justify-between gap-y-4 py-4 px-4 md:px-12">
       <Link data-analytics="" data-cta="" href="/" className="inline-flex gap-2 items-center">
         <Image src={AppLogo} alt="App logo" className="size-8" />
-        <span className="font-bold text-xl">PortfoliOS</span>
+        <span className="font-bold text-xl">WorkCMS</span>
       </Link>
       <Popover open={menuOpen} onOpenChange={setMenuOpen}>
         <PopoverTrigger asChild>
@@ -60,13 +60,6 @@ export default function Navbar() {
                         Sign In
                       </Link>
                     </li>
-                    <li>
-                      <Link className="w-full" data-analytics="" data-cta="" href="/contact">
-                        <Button className="w-full bg-green-800 text-white" size="lg">
-                          Contact Me
-                        </Button>
-                      </Link>
-                    </li>
                   </>
                 )}
           </ul>
@@ -95,11 +88,6 @@ export default function Navbar() {
               <>
                 <Link data-analytics="" data-cta="" href="/dashboard/login" className="text-muted-foreground">
                   Sign In
-                </Link>
-                <Link data-analytics="" data-cta="" href="/contact">
-                  <Button className="bg-green-800 text-white" size="lg">
-                    Contact Me
-                  </Button>
                 </Link>
               </>
             )}
